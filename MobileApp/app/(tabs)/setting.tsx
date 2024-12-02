@@ -1,9 +1,9 @@
 import { Text, View, StyleSheet } from 'react-native';
 
-export default function cameraScreen() {
+export default function settingScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Camera screen</Text>
+      <Text style={styles.text}>Setting screen</Text>
     </View>
   );
 }

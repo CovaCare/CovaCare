@@ -1,0 +1,21 @@
+[
+    {
+      "id": "1",
+      "name": "Michael Jackson",
+      "phone": "555-555-5555",
+      "status": "Active"
+    },
+    {
+      "id": "2",
+      "name": "Justin Bieber",
+      "phone": "555-555-5555",
+      "status": "Inactive"
+    },
+    {
+      "id": "3",
+      "name": "Taylor Swift",
+      "phone": "555-555-5555",
+      "status": "Active"
+    }
+  ]
+  

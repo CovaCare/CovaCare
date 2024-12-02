@@ -1,74 +1,121 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { getContacts, initializeContacts } from '../utils/fileUtils';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function EmergencyContacts() {
+  const router = useRouter();
+  const [contacts, setContacts] = useState<any[]>([]);
 
-export default function HomeScreen() {
+  const loadContacts = async () => {
+    await initializeContacts();
+    const data = await getContacts();
+    setContacts(data);
+  };
+
+  // Load contacts when the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      loadContacts();
+    }, [])
+  );
+
+  const renderContact = ({ item }) => (
+    <TouchableOpacity
+      style={styles.contactItem}
+      onPress={() => router.push(`../emergency-contacts/edit-contact/${item.id}`)}
+    >
+      <View>
+        <Text style={styles.contactName}>{item.name}</Text>
+        <Text style={styles.contactPhone}>{item.phone}</Text>
+        <Text style={styles.contactStatus}>
+          Status: <Text style={item.status === 'Active' ? styles.active : styles.inactive}>{item.status}</Text>
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      {contacts.length === 0 ? (
+        <Text style={styles.noContactsText}>No contacts available. Add a new contact.</Text>
+      ) : (
+        <FlatList
+          data={contacts}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderContact}
+          contentContainerStyle={styles.contactList}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome to Our Capstone!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      )}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => router.push('../emergency-contacts/add-contact')}
+      >
+        <Text style={styles.addButtonText}>Add New</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: '#F9F9F9',
+    padding: 16,
+  },
+  contactList: {
+    flexGrow: 1,
+  },
+  contactItem: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  contactName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#25292e',
+  },
+  contactPhone: {
+    fontSize: 14,
+    color: '#25292e',
+    marginTop: 4,
+  },
+  contactStatus: {
+    fontSize: 14,
+    color: '#25292e',
+    marginTop: 4,
+  },
+  active: {
+    color: '#00AA00',
+    fontWeight: 'bold',
+  },
+  inactive: {
+    color: '#AA0000',
+    fontWeight: 'bold',
+  },
+  addButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 16,
+    borderRadius: 8,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    marginTop: 16,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  noContactsText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
   },
 });

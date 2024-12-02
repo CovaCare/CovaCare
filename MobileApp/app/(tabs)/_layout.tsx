@@ -1,50 +1,42 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+        tabBarActiveTintColor: '#4762e8',
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Emergency Contacts',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="contacts.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <AntDesign name={focused ? 'contacts' : 'contacts'} color={color} size={24} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="setting"
         options={{
-          title: 'Setting',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="setting.fill" color={color} />,
+          title: 'Settings',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'settings' : 'settings'} color={color} size={24}/>
+          ),
         }}
       />
       <Tabs.Screen
         name="camera"
         options={{
           title: 'Camera',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="videocamera.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesome name={focused ? 'video-camera' : 'video-camera'} color={color} size={24}/>
+          ),
         }}
       />
     </Tabs>
