@@ -10,7 +10,7 @@ def send_sms(phone_number, message):
     return response.json()
 
 if __name__ == '__main__':
-    phone_number = '3062096718'  
+    phone_number = 'type your phone_number'  
     message = 'Hello! This is a test message using TextBelt.'
     result = send_sms(phone_number, message)
     print(result)
