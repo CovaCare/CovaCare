@@ -40,7 +40,7 @@ export default function EmergencyContacts() {
         // Add new contact
         const newContact = await addContact({
           name: contact.name,
-          phoneNumber: contact.phone, // or contact.phone_number
+          phoneNumber: contact.phone,
           status: statusValue,
         });
         setContacts((prev) => [...prev, newContact]);
@@ -61,8 +61,6 @@ export default function EmergencyContacts() {
     }
   };
   
-
-
   const openModal = (contact = null) => {
     setCurrentContact(contact);
     setModalVisible(true);
@@ -133,12 +131,20 @@ const ContactForm = ({ contact, onSave, onCancel }) => {
 
   return (
     <View style={styles.formContainer}>
+      {/* Display a title based on whether a contact exists */}
+      <Text style={styles.formTitle}>
+        {contact ? 'Edit Contact' : 'Add New Contact'}
+      </Text>
+
+      {/* Name Input */}
       <TextInput
         style={styles.input}
         placeholder="Name"
         value={name}
         onChangeText={setName}
       />
+
+      {/* Phone Number Input */}
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
@@ -146,11 +152,15 @@ const ContactForm = ({ contact, onSave, onCancel }) => {
         onChangeText={setPhone}
         keyboardType="phone-pad"
       />
+
+      {/* Active Switch */}
       <View style={styles.switchContainer}>
         <Text>Active?</Text>
         <Switch value={active} onValueChange={setActive} />
       </View>
-      <View style={styles.formButtons}>
+      
+      {/* Buttons at the bottom */}
+      <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
@@ -227,18 +237,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   cancelButton: {
     backgroundColor: '#FF5252',
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 8,
     flex: 1,
     marginRight: 8,
+    alignItems: 'center',
   },
   saveButton: {
     backgroundColor: '#007BFF',
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 8,
     flex: 1,
+    alignItems: 'center',
   },
   deleteButton: {
     backgroundColor: '#FF5252',
@@ -254,5 +276,11 @@ const styles = StyleSheet.create({
     color: '#FFF',
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  formTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 24,
+    textAlign: 'center',
   },
 });
