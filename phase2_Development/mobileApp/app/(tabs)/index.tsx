@@ -2,12 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, TextInput, Switch, Modal, StyleSheet } from 'react-native';
 import { getContacts, addContact, updateContact, deleteContact } from '../api/contactsApi';
 
-export default function EmergencyContacts() {
-  const [contacts, setContacts] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [currentContact, setCurrentContact] = useState(null);
+type Contact = {
+  id: number; // Primary key
+  name: string; // Contact name
+  phone_number: string; // Contact phone number
+  status: 0 | 1; // Active (1) or inactive (0)
+};
 
-  // Fetch contacts from API
+export default function EmergencyContacts() {
+  // State for contacts, modal visibility, and the current contact
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentContact, setCurrentContact] = useState<Contact | null>(null);
+
+  // Fetch contacts from the API on component mount
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -21,26 +29,25 @@ export default function EmergencyContacts() {
     fetchContacts();
   }, []);
 
-  const handleSaveContact = async (contact) => {
+  // Handle saving a new or existing contact
+  const handleSaveContact = async (contact: Contact) => {
     try {
-      // Convert the boolean `active` into 1 (true) or 0 (false)
-      const statusValue = contact.active ? 1 : 0;
-      
+      const statusValue = contact.status; // 0 or 1
       if (contact.id) {
-        // Update existing contact
+        // Update an existing contact
         const updated = await updateContact(contact.id, {
           name: contact.name,
-          phoneNumber: contact.phone,
+          phoneNumber: contact.phone_number,
           status: statusValue,
         });
         setContacts((prev) =>
           prev.map((item) => (item.id === contact.id ? updated : item))
         );
       } else {
-        // Add new contact
+        // Add a new contact
         const newContact = await addContact({
           name: contact.name,
-          phoneNumber: contact.phone,
+          phoneNumber: contact.phone_number,
           status: statusValue,
         });
         setContacts((prev) => [...prev, newContact]);
@@ -52,7 +59,8 @@ export default function EmergencyContacts() {
     }
   };
 
-  const handleDeleteContact = async (id) => {
+  // Handle deleting a contact
+  const handleDeleteContact = async (id: number) => {
     try {
       await deleteContact(id);
       setContacts((prev) => prev.filter((item) => item.id !== id));
@@ -60,13 +68,15 @@ export default function EmergencyContacts() {
       console.error('Error deleting contact:', error);
     }
   };
-  
-  const openModal = (contact = null) => {
+
+  // Open the modal with or without a specific contact
+  const openModal = (contact: Contact | null = null) => {
     setCurrentContact(contact);
     setModalVisible(true);
   };
 
-  const renderContact = ({ item }) => (
+  // Render a single contact item
+  const renderContact = ({ item }: { item: Contact }) => (
     <View style={styles.contactItem}>
       <TouchableOpacity
         onPress={() => openModal(item)}
@@ -88,7 +98,6 @@ export default function EmergencyContacts() {
       </TouchableOpacity>
     </View>
   );
-  
 
   return (
     <View style={styles.container}>
@@ -115,23 +124,32 @@ export default function EmergencyContacts() {
     </View>
   );
 }
-const ContactForm = ({ contact, onSave, onCancel }) => {
+
+// ContactForm Component
+const ContactForm = ({
+  contact,
+  onSave,
+  onCancel,
+}: {
+  contact: Contact | null;
+  onSave: (contact: Contact) => void;
+  onCancel: () => void;
+}) => {
   const [name, setName] = useState(contact?.name || '');
   const [phone, setPhone] = useState(contact?.phone_number || '');
   const [active, setActive] = useState(contact?.status === 1);
 
   const handleSave = () => {
     onSave({
-      id: contact?.id, // Use the existing ID for updates
+      id: contact?.id || 0, // Use 0 or another placeholder for new contacts
       name,
-      phone,
-      active,
+      phone_number: phone,
+      status: active ? 1 : 0,
     });
   };
 
   return (
     <View style={styles.formContainer}>
-      {/* Display a title based on whether a contact exists */}
       <Text style={styles.formTitle}>
         {contact ? 'Edit Contact' : 'Add New Contact'}
       </Text>
@@ -140,6 +158,7 @@ const ContactForm = ({ contact, onSave, onCancel }) => {
       <TextInput
         style={styles.input}
         placeholder="Name"
+        placeholderTextColor="#7D7D7D"
         value={name}
         onChangeText={setName}
       />
@@ -148,9 +167,9 @@ const ContactForm = ({ contact, onSave, onCancel }) => {
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
+        placeholderTextColor="#7D7D7D"
         value={phone}
         onChangeText={setPhone}
-        keyboardType="phone-pad"
       />
 
       {/* Active Switch */}
@@ -171,7 +190,6 @@ const ContactForm = ({ contact, onSave, onCancel }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -239,7 +257,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 16,
+    bottom: 25,
     left: 16,
     right: 16,
     flexDirection: 'row',
