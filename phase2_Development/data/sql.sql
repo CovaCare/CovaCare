@@ -9,29 +9,27 @@
 
 
 -- CREATE TABLE cameras (
---     id INTEGER PRIMARY KEY AUTOINCREMENT,
---     name TEXT NOT NULL,          -- Camera name
-
---     -- Status indicating if the camera is turned on/off (0 = off/disabled, 1 = on/enabled)
---     status INTEGER NOT NULL CHECK (status IN (0, 1)),
-    
---     ip TEXT,                     -- IP address or streaming URL for retrieving the live feed
-  
---     -- Separate detection features as booleans (0 = disabled, 1 = enabled)
---     fall_detection_enabled INTEGER NOT NULL CHECK (fall_detection_enabled IN (0, 1)) DEFAULT 1,
---     inactivity_detection_enabled INTEGER NOT NULL CHECK (inactivity_detection_enabled IN (0, 1)) DEFAULT 1,
-
---     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
---     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+--     id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique identifier for each camera
+--     name TEXT NOT NULL, -- Camera name, representing its location (e.g., Living Room, Kitchen)
+--     username TEXT, -- Username for accessing the camera
+--     password TEXT, -- Password for accessing the camera
+--     stream_url TEXT, -- Streaming URL or IP address
+--     fall_detection_enabled INTEGER NOT NULL CHECK (fall_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
+--     inactivity_detection_enabled INTEGER NOT NULL CHECK (inactivity_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
+--     created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Timestamp for when the camera was added
+--     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP -- Timestamp for the last update
 -- );
 
--- CREATE TABLE settings (
---     camera_id INTEGER PRIMARY KEY,  -- One settings row per camera, referencing cameras.id
---     fall_detection_enabled INTEGER NOT NULL CHECK (fall_detection_enabled IN (0, 1)) DEFAULT 1,
---     inactivity_detection_enabled INTEGER NOT NULL CHECK (inactivity_detection_enabled IN (0, 1)) DEFAULT 1,
---     active_start_time TEXT NOT NULL,  -- e.g., "08:00"
---     active_end_time TEXT NOT NULL,    -- e.g., "20:00"
---     FOREIGN KEY (camera_id) REFERENCES cameras(id) ON DELETE CASCADE
+
+-- CREATE TABLE global_settings (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique identifier for global settings
+--     fall_detection_enabled INTEGER NOT NULL CHECK (fall_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
+--     fall_detection_start_time TIME DEFAULT NULL, -- Start time for Fall Detection
+--     fall_detection_end_time TIME DEFAULT NULL, -- End time for Fall Detection
+--     inactivity_detection_enabled INTEGER NOT NULL CHECK (inactivity_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
+--     inactivity_detection_start_time TIME DEFAULT NULL, -- Start time for Inactivity Detection
+--     inactivity_detection_end_time TIME DEFAULT NULL, -- End time for Inactivity Detection
+--     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP -- Timestamp for the last update
 -- );
 
 
