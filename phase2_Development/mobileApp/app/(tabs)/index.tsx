@@ -155,6 +155,7 @@ const ContactForm = ({
       </Text>
 
       {/* Name Input */}
+      <Text style={styles.fieldTitle}>Name</Text>
       <TextInput
         style={styles.input}
         placeholder="Name"
@@ -164,6 +165,7 @@ const ContactForm = ({
       />
 
       {/* Phone Number Input */}
+      <Text style={styles.fieldTitle}>Phone Number</Text>
       <TextInput
         style={styles.input}
         placeholder="Phone Number"
@@ -300,5 +302,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: 'center',
+  },
+  fieldTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 7,
   },
 });
