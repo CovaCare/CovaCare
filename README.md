@@ -5,7 +5,7 @@ This project focuses on the development of a computer vision-based accident dete
 ## Phase 1: Development
 
 Phase 1 focuses on validating the concept and developing the core features and foundational documents for the project.  
-All relevant files and documents can be found in the [Phase 1 Development folder](./Phase%201:%20Development/).
+All relevant files and documents can be found in the [Phase 1 Development folder](./phase1_Development/).
 
 ### CovaCare Development Vlog
 - [First semester development vlog](https://www.youtube.com/watch?v=Jqfks_QOpdg)

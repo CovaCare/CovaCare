@@ -1,8 +1,12 @@
 # Application Factory
 from flask import Flask
+from flask_cors import CORS 
 
 def create_app():
     app = Flask(__name__)
+
+    # Enable CORS for the app
+    CORS(app)
 
     # Import routes (blueprints)
     from contacts_routes import contacts_bp
@@ -17,3 +21,4 @@ def create_app():
     app.register_blueprint(system_bp)
 
     return app
+
