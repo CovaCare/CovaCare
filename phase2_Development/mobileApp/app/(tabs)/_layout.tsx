@@ -3,6 +3,7 @@ import { Tabs } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { SafeAreaView } from 'react-native';
 
 
 export default function TabLayout() {
@@ -33,7 +34,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="camera"
         options={{
-          title: 'Camera',
+          title: 'Cameras',
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome name={focused ? 'video-camera' : 'video-camera'} color={color} size={24}/>
           ),
