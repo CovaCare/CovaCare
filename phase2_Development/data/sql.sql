@@ -2,7 +2,9 @@
 --     id INTEGER PRIMARY KEY AUTOINCREMENT,
 --     name TEXT NOT NULL,
 --     phone_number TEXT NOT NULL,
---     status INTEGER NOT NULL CHECK (status IN (0, 1))
+--     status INTEGER NOT NULL CHECK (status IN (0, 1)),
+--     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+--     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 -- );
 
 -- select * from contacts;
@@ -43,3 +45,4 @@
 --      -d '{"name": "David Updated", "phoneNumber": "13062345678", "status": 0}'
 
 -- curl -X DELETE http://localhost:5000/contacts/1
+
