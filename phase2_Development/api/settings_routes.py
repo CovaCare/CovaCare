@@ -4,48 +4,61 @@ from db import get_db_connection, query_db
 
 settings_bp = Blueprint('settings', __name__)
 
+# Get global settings
 @settings_bp.route('/settings', methods=['GET'])
 def get_settings():
-    settings = query_db("SELECT * FROM settings")
-    return jsonify([dict(setting) for setting in settings])
+    settings = query_db("SELECT * FROM global_settings WHERE id = 1", one=True)  # Assuming only one row
+    if settings is None:
+        abort(404, description="Global settings not found")
+    return jsonify(dict(settings))
 
+# Update global settings
 @settings_bp.route('/settings', methods=['PUT'])
 def update_settings():
     data = request.get_json()
     if not data:
         abort(400, description="No settings provided")
-    if not isinstance(data, list):
-        data = [data]
     
+    # Validate input
+    required_keys = [
+        "fall_detection_enabled", 
+        "fall_detection_start_time", 
+        "fall_detection_end_time", 
+        "inactivity_detection_enabled", 
+        "inactivity_detection_start_time", 
+        "inactivity_detection_end_time"
+    ]
+    if not all(key in data for key in required_keys):
+        abort(400, description="Missing required fields in global settings")
+
+    # Update settings
     conn = get_db_connection()
-    for setting in data:
-        if not all(key in setting for key in ["camera_id", "active_start_time", "active_end_time"]):
-            abort(400, description="Missing required fields in settings for camera_id {}".format(setting.get("camera_id")))
-        
-        cursor = conn.execute(
-            """UPDATE settings SET 
-               fall_detection_enabled = ?,
-               inactivity_detection_enabled = ?,
-               active_start_time = ?,
-               active_end_time = ?
-               WHERE camera_id = ?""",
-            (setting.get("fall_detection_enabled", 1),
-             setting.get("inactivity_detection_enabled", 1),
-             setting["active_start_time"],
-             setting["active_end_time"],
-             setting["camera_id"])
+    cursor = conn.execute(
+        """
+        UPDATE global_settings SET 
+            fall_detection_enabled = ?,
+            fall_detection_start_time = ?,
+            fall_detection_end_time = ?,
+            inactivity_detection_enabled = ?,
+            inactivity_detection_start_time = ?,
+            inactivity_detection_end_time = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = 1
+        """,
+        (
+            data["fall_detection_enabled"],
+            data["fall_detection_start_time"],
+            data["fall_detection_end_time"],
+            data["inactivity_detection_enabled"],
+            data["inactivity_detection_start_time"],
+            data["inactivity_detection_end_time"]
         )
-        if cursor.rowcount == 0:
-            conn.execute(
-                """INSERT INTO settings 
-                   (camera_id, fall_detection_enabled, inactivity_detection_enabled, active_start_time, active_end_time)
-                   VALUES (?, ?, ?, ?, ?)""",
-                (setting["camera_id"],
-                 setting.get("fall_detection_enabled", 1),
-                 setting.get("inactivity_detection_enabled", 1),
-                 setting["active_start_time"],
-                 setting["active_end_time"])
-            )
+    )
     conn.commit()
     conn.close()
-    return jsonify({"message": "Settings updated"}), 200
+
+    # Check if the row was updated
+    if cursor.rowcount == 0:
+        abort(404, description="Failed to update global settings")
+
+    return jsonify({"message": "Global settings updated"}), 200
