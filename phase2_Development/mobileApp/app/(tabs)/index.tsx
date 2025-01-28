@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, TextInput, Switch, Modal, StyleSheet } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, TextInput, Switch, Modal, StyleSheet, Alert } from 'react-native';
 import { getContacts, addContact, updateContact, deleteContact } from '../api/contactsApi';
 
 type Contact = {
@@ -7,6 +7,8 @@ type Contact = {
   name: string; // Contact name
   phone_number: string; // Contact phone number
   status: 0 | 1; // Active (1) or inactive (0)
+  created_at?: string;
+  updated_at?: string;
 };
 
 export default function EmergencyContacts() {
@@ -37,7 +39,7 @@ export default function EmergencyContacts() {
         // Update an existing contact
         const updated = await updateContact(contact.id, {
           name: contact.name,
-          phoneNumber: contact.phone_number,
+          phone_number: contact.phone_number,
           status: statusValue,
         });
         setContacts((prev) =>
@@ -47,7 +49,7 @@ export default function EmergencyContacts() {
         // Add a new contact
         const newContact = await addContact({
           name: contact.name,
-          phoneNumber: contact.phone_number,
+          phone_number: contact.phone_number,
           status: statusValue,
         });
         setContacts((prev) => [...prev, newContact]);
@@ -61,12 +63,26 @@ export default function EmergencyContacts() {
 
   // Handle deleting a contact
   const handleDeleteContact = async (id: number) => {
-    try {
-      await deleteContact(id);
-      setContacts((prev) => prev.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error('Error deleting contact:', error);
-    }
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to delete this contact?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            
+            try {
+              await deleteContact(id);
+              setContacts((prev) => prev.filter((item) => item.id !== id));
+            } catch (error) {
+              console.error('Error deleting contact:', error);
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Open the modal with or without a specific contact
@@ -137,7 +153,7 @@ const ContactForm = ({
 }) => {
   const [name, setName] = useState(contact?.name || '');
   const [phone, setPhone] = useState(contact?.phone_number || '');
-  const [active, setActive] = useState(contact?.status === 1);
+  const [active, setActive] = useState(contact ? contact.status === 1 : true);
 
   const handleSave = () => {
     onSave({
@@ -145,6 +161,8 @@ const ContactForm = ({
       name,
       phone_number: phone,
       status: active ? 1 : 0,
+      created_at: contact?.created_at || '',
+      updated_at: contact?.updated_at || '',
     });
   };
 
