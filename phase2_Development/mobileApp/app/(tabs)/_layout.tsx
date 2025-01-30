@@ -1,42 +1,51 @@
-import { Tabs } from 'expo-router';
-
-import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { SafeAreaView } from 'react-native';
-
+import { Tabs } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#4762e8',
+        tabBarActiveTintColor: "#4762e8",
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Emergency Contacts',
+          title: "Emergency Contacts",
           tabBarIcon: ({ color, focused }) => (
-            <AntDesign name={focused ? 'contacts' : 'contacts'} color={color} size={24} />
+            <AntDesign
+              name={focused ? "contacts" : "contacts"}
+              color={color}
+              size={24}
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="setting"
+        name="settings"
         options={{
-          title: 'Settings',
+          title: "Settings",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'settings' : 'settings'} color={color} size={24}/>
+            <Ionicons
+              name={focused ? "settings" : "settings"}
+              color={color}
+              size={24}
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="camera"
+        name="cameras"
         options={{
-          title: 'Cameras',
+          title: "Cameras",
           tabBarIcon: ({ color, focused }) => (
-            <FontAwesome name={focused ? 'video-camera' : 'video-camera'} color={color} size={24}/>
+            <FontAwesome
+              name={focused ? "video-camera" : "video-camera"}
+              color={color}
+              size={24}
+            />
           ),
         }}
       />
