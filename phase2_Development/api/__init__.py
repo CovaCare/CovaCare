@@ -14,3 +14,6 @@ def create_app():
     app.register_blueprint(contacts_bp)
     app.register_blueprint(cameras_bp)
     app.register_blueprint(settings_bp)
+    app.register_blueprint(system_bp)
+
+    return app

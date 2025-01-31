@@ -28,14 +28,14 @@ def add_contact():
     # Validate 'status'
     if data["status"] not in [0, 1]:
         abort(400, description="Status must be 0 or 1")
-    conn = get_db_connection()
-    cursor = conn.execute(
+    
+    result = query_db(
         "INSERT INTO contacts (name, phone_number, status) VALUES (?, ?, ?)",
-        (data["name"], data["phone_number"], data["status"])
+        (data["name"], data["phone_number"], data["status"]),
+        commit=True
     )
-    conn.commit()
-    new_id = cursor.lastrowid
-    conn.close()
+    new_id = result['lastrowid']
+    
     new_contact = query_db("SELECT * FROM contacts WHERE id = ?", (new_id,), one=True)
     return jsonify(dict(new_contact)), 201
 
@@ -48,33 +48,28 @@ def update_contact(contact_id):
         abort(400, description="Missing required fields")
     if data["status"] not in [0, 1]:
         abort(400, description="Status must be 0 or 1")
-    conn = get_db_connection()
-    cursor = conn.execute("SELECT * FROM contacts WHERE id = ?", (contact_id,))
-    contact = cursor.fetchone()
-    if contact is None:
-        conn.close()
+    
+    existing_contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)
+    if existing_contact is None:
         abort(404, description="Contact not found")
-    conn.execute(
+
+    query_db(
         "UPDATE contacts SET name = ?, phone_number = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        (data["name"], data["phone_number"], data["status"], contact_id)
+        (data["name"], data["phone_number"], data["status"], contact_id),
+        commit=True
     )
-    conn.commit()
+    
     updated_contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)
-    conn.close()
     return jsonify(dict(updated_contact))
 
 # Delete a contact
 @contacts_bp.route('/contacts/<int:contact_id>', methods=['DELETE'])
 def delete_contact(contact_id):
-    conn = get_db_connection()
-    cursor = conn.execute("SELECT * FROM contacts WHERE id = ?", (contact_id,))
-    contact = cursor.fetchone()
-    if contact is None:
-        conn.close()
+    existing_contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)
+    if existing_contact is None:
         abort(404, description="Contact not found")
-    conn.execute("DELETE FROM contacts WHERE id = ?", (contact_id,))
-    conn.commit()
-    conn.close()
+
+    query_db("DELETE FROM contacts WHERE id = ?", (contact_id,), commit=True)
     return jsonify({"message": "Contact deleted"}), 200
 
 # Test alert a contact

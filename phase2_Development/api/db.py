@@ -17,7 +17,7 @@ def query_db(query, args=(), one=False, commit=False):
         cursor = conn.execute(query, args)
         if commit:
             conn.commit()
-            return
+            return {'lastrowid': cursor.lastrowid, 'rowcount': cursor.rowcount}
         results = cursor.fetchall()
         return (results[0] if results else None) if one else results
     except sqlite3.OperationalError as e:
@@ -25,4 +25,3 @@ def query_db(query, args=(), one=False, commit=False):
         raise
     finally:
         conn.close()
-

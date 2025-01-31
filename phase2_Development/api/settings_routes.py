@@ -7,7 +7,7 @@ settings_bp = Blueprint('settings', __name__)
 # Get global settings
 @settings_bp.route('/settings', methods=['GET'])
 def get_settings():
-    settings = query_db("SELECT * FROM global_settings WHERE id = 1", one=True)  # Assuming only one row
+    settings = query_db("SELECT * FROM global_settings WHERE id = 1", one=True)
     if settings is None:
         abort(404, description="Global settings not found")
     return jsonify(dict(settings))
@@ -19,7 +19,7 @@ def update_settings():
     if not data:
         abort(400, description="No settings provided")
     
-    # Validate input
+    # Validate inputs
     required_keys = [
         "fall_detection_enabled", 
         "fall_detection_start_time", 
@@ -32,8 +32,7 @@ def update_settings():
         abort(400, description="Missing required fields in global settings")
 
     # Update settings
-    conn = get_db_connection()
-    cursor = conn.execute(
+    result = query_db(
         """
         UPDATE global_settings SET 
             fall_detection_enabled = ?,
@@ -52,13 +51,11 @@ def update_settings():
             data["inactivity_detection_enabled"],
             data["inactivity_detection_start_time"],
             data["inactivity_detection_end_time"]
-        )
+        ),
+        commit=True
     )
-    conn.commit()
-    conn.close()
-
-    # Check if the row was updated
-    if cursor.rowcount == 0:
+    
+    if result['rowcount'] == 0:
         abort(404, description="Failed to update global settings")
 
     return jsonify({"message": "Global settings updated"}), 200
