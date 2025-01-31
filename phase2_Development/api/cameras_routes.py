@@ -10,7 +10,7 @@ def get_cameras():
     cameras = query_db("SELECT * FROM cameras")
     return jsonify([dict(camera) for camera in cameras])
 
-# Get a single camera by ID
+# Get a specific camera
 @cameras_bp.route('/cameras/<int:camera_id>', methods=['GET'])
 def get_camera(camera_id):
     camera = query_db("SELECT * FROM cameras WHERE id = ?", (camera_id,), one=True)

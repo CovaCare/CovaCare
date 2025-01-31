@@ -1,13 +1,16 @@
+# Contacts Endpoints
 from flask import Blueprint, request, jsonify, abort
 from db import get_db_connection, query_db
 
 contacts_bp = Blueprint('contacts', __name__)
 
+# Get all contacts
 @contacts_bp.route('/contacts', methods=['GET'])
 def get_contacts():
     contacts = query_db("SELECT * FROM contacts")
     return jsonify([dict(contact) for contact in contacts])
 
+# Get a specific contact
 @contacts_bp.route('/contacts/<int:contact_id>', methods=['GET'])
 def get_contact(contact_id):
     contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)
@@ -15,6 +18,7 @@ def get_contact(contact_id):
         abort(404, description="Contact not found")
     return jsonify(dict(contact))
 
+# Add a new contact
 @contacts_bp.route('/contacts', methods=['POST'])
 def add_contact():
     data = request.get_json()
@@ -35,6 +39,7 @@ def add_contact():
     new_contact = query_db("SELECT * FROM contacts WHERE id = ?", (new_id,), one=True)
     return jsonify(dict(new_contact)), 201
 
+# Update an existing contact
 @contacts_bp.route('/contacts/<int:contact_id>', methods=['PUT'])
 def update_contact(contact_id):
     data = request.get_json()
@@ -58,6 +63,7 @@ def update_contact(contact_id):
     conn.close()
     return jsonify(dict(updated_contact))
 
+# Delete a contact
 @contacts_bp.route('/contacts/<int:contact_id>', methods=['DELETE'])
 def delete_contact(contact_id):
     conn = get_db_connection()
@@ -71,6 +77,7 @@ def delete_contact(contact_id):
     conn.close()
     return jsonify({"message": "Contact deleted"}), 200
 
+# Test alert a contact
 @contacts_bp.route('/contacts/<int:contact_id>/test-alert', methods=['POST'])
 def test_alert_contact(contact_id):
     contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)
