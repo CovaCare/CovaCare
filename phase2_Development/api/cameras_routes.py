@@ -22,12 +22,11 @@ def get_camera(camera_id):
 @cameras_bp.route('/cameras', methods=['POST'])
 def add_camera():
     data = request.get_json()
-    if not data or not all(key in data for key in ["name"]):
-        abort(400, description="Missing required fields: 'name'")
     
-    username = data.get("username")
-    password = data.get("password")
-    stream_url = data.get("stream_url")
+    name = data.get("name", "")
+    username = data.get("username", "")
+    password = data.get("password", "")
+    stream_url = data.get("stream_url", "")
     fall_detection_enabled = data.get("fall_detection_enabled", 0)
     inactivity_detection_enabled = data.get("inactivity_detection_enabled", 0)
 
@@ -37,7 +36,7 @@ def add_camera():
         (name, username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled)
         VALUES (?, ?, ?, ?, ?, ?)
         """,
-        (data["name"], username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled),
+        (name, username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled),
         commit=True
     )
     new_id = result['lastrowid']

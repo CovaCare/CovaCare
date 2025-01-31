@@ -22,20 +22,18 @@ def get_contact(contact_id):
 @contacts_bp.route('/contacts', methods=['POST'])
 def add_contact():
     data = request.get_json()
-    required_fields = ["name", "phone_number", "status"]
-    if not data or not all(key in data for key in required_fields):
-        abort(400, description="Missing required fields")
-    # Validate 'status'
-    if data["status"] not in [0, 1]:
-        abort(400, description="Status must be 0 or 1")
+
+    name = data.get("name", "")
+    phone_number = data.get("phone_number", "")
+    status = data.get("status", 1)
     
     result = query_db(
         "INSERT INTO contacts (name, phone_number, status) VALUES (?, ?, ?)",
-        (data["name"], data["phone_number"], data["status"]),
+        (name, phone_number, status),
         commit=True
     )
     new_id = result['lastrowid']
-    
+
     new_contact = query_db("SELECT * FROM contacts WHERE id = ?", (new_id,), one=True)
     return jsonify(dict(new_contact)), 201
 
@@ -43,19 +41,18 @@ def add_contact():
 @contacts_bp.route('/contacts/<int:contact_id>', methods=['PUT'])
 def update_contact(contact_id):
     data = request.get_json()
-    required_fields = ["name", "phone_number", "status"]
-    if not data or not all(key in data for key in required_fields):
-        abort(400, description="Missing required fields")
-    if data["status"] not in [0, 1]:
-        abort(400, description="Status must be 0 or 1")
     
     existing_contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)
     if existing_contact is None:
         abort(404, description="Contact not found")
 
+    name = data.get("name", existing_contact["name"])
+    phone_number = data.get("phone_number", existing_contact["phone_number"])
+    status = data.get("status", existing_contact["status"])
+
     query_db(
         "UPDATE contacts SET name = ?, phone_number = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        (data["name"], data["phone_number"], data["status"], contact_id),
+        (name, phone_number, status, contact_id),
         commit=True
     )
     
