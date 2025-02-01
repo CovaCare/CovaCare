@@ -6,46 +6,35 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 export default function TabLayout() {
   return (
     <Tabs
+      initialRouteName="emergencyContacts"
       screenOptions={{
-        tabBarActiveTintColor: "#4762e8",
+        tabBarActiveTintColor: '#4762e8',
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="emergencyContacts"
         options={{
-          title: "Emergency Contacts",
-          tabBarIcon: ({ color, focused }) => (
-            <AntDesign
-              name={focused ? "contacts" : "contacts"}
-              color={color}
-              size={24}
-            />
+          title: 'Emergency Contacts',
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="contacts" color={color} size={24} />
           ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "settings" : "settings"}
-              color={color}
-              size={24}
-            />
+          title: 'Settings',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="settings" color={color} size={24} />
           ),
         }}
       />
       <Tabs.Screen
         name="cameras"
         options={{
-          title: "Cameras",
-          tabBarIcon: ({ color, focused }) => (
-            <FontAwesome
-              name={focused ? "video-camera" : "video-camera"}
-              color={color}
-              size={24}
-            />
+          title: 'Cameras',
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="video-camera" color={color} size={24} />
           ),
         }}
       />
