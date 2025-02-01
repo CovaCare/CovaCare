@@ -1,18 +1,21 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity, Text } from "react-native";
 import { Contact } from "../api/types/contactTypes";
 import { ContactListItem } from "./ContactListItem";
+import { styles } from "../(tabs)/styles/ContactScreen.styles";
 
 interface ContactListProps {
   contacts: Contact[];
-  onContactSelect: (contact: Contact | null) => void;
+  onContactSelect: (contact: Contact) => void;
   onDeleteContact: (contact: Contact) => void;
+  onAddContact: () => void;
 }
 
 export const ContactList = ({
   contacts,
   onContactSelect,
   onDeleteContact,
+  onAddContact,
 }: ContactListProps) => {
   return (
     <FlatList
@@ -25,6 +28,11 @@ export const ContactList = ({
           onDelete={onDeleteContact}
         />
       )}
+      ListFooterComponent={
+        <TouchableOpacity style={styles.addButton} onPress={onAddContact}>
+          <Text style={styles.addButtonText}>Add New Contact</Text>
+        </TouchableOpacity>
+      }
     />
   );
 };

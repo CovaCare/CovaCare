@@ -24,6 +24,9 @@ export const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 16,
   },
+  inputError: {
+    borderColor: "#FF5252",
+  },
   buttonContainer: {
     position: "absolute",
     bottom: 25,

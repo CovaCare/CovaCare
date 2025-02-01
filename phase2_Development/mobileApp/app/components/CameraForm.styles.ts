@@ -24,6 +24,15 @@ export const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 16,
   },
+  inputError: {
+    borderColor: "#FF5252",
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
   buttonContainer: {
     position: "absolute",
     bottom: 25,

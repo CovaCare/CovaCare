@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   cameraName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
   },
   cameraDetails: {
