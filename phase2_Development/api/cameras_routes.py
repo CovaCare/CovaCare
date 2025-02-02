@@ -22,7 +22,7 @@ def get_camera(camera_id):
 @cameras_bp.route('/cameras', methods=['POST'])
 def add_camera():
     data = request.get_json()
-    
+
     name = data.get("name", "")
     username = data.get("username", "")
     password = data.get("password", "")
@@ -30,13 +30,46 @@ def add_camera():
     fall_detection_enabled = data.get("fall_detection_enabled", 0)
     inactivity_detection_enabled = data.get("inactivity_detection_enabled", 0)
 
+    fall_detection_start_time = data.get("fall_detection_start_time", "")
+    fall_detection_end_time = data.get("fall_detection_end_time", "")
+    inactivity_detection_start_time = data.get("inactivity_detection_start_time", "")
+    inactivity_detection_end_time = data.get("inactivity_detection_end_time", "")
+
+    inactivity_detection_sensitivity = data.get("inactivity_detection_sensitivity", 50)
+    inactivity_detection_duration = data.get("inactivity_detection_duration", 30)
+
     result = query_db(
         """
-        INSERT INTO cameras 
-        (name, username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO cameras (
+            name,
+            username,
+            password,
+            stream_url,
+            fall_detection_enabled,
+            inactivity_detection_enabled,
+            fall_detection_start_time,
+            fall_detection_end_time,
+            inactivity_detection_start_time,
+            inactivity_detection_end_time,
+            inactivity_detection_sensitivity,
+            inactivity_detection_duration
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (name, username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled),
+        (
+            name,
+            username,
+            password,
+            stream_url,
+            fall_detection_enabled,
+            inactivity_detection_enabled,
+            fall_detection_start_time,
+            fall_detection_end_time,
+            inactivity_detection_start_time,
+            inactivity_detection_end_time,
+            inactivity_detection_sensitivity,
+            inactivity_detection_duration
+        ),
         commit=True
     )
     new_id = result['lastrowid']
@@ -63,15 +96,47 @@ def update_camera(camera_id):
     fall_detection_enabled = data.get("fall_detection_enabled", existing_camera["fall_detection_enabled"])
     inactivity_detection_enabled = data.get("inactivity_detection_enabled", existing_camera["inactivity_detection_enabled"])
 
+    fall_detection_start_time = data.get("fall_detection_start_time", existing_camera["fall_detection_start_time"])
+    fall_detection_end_time = data.get("fall_detection_end_time", existing_camera["fall_detection_end_time"])
+    inactivity_detection_start_time = data.get("inactivity_detection_start_time", existing_camera["inactivity_detection_start_time"])
+    inactivity_detection_end_time = data.get("inactivity_detection_end_time", existing_camera["inactivity_detection_end_time"])
+    inactivity_detection_sensitivity = data.get("inactivity_detection_sensitivity", existing_camera["inactivity_detection_sensitivity"])
+    inactivity_detection_duration = data.get("inactivity_detection_duration", existing_camera["inactivity_detection_duration"])
+
     query_db(
         """
         UPDATE cameras
-        SET name = ?, username = ?, password = ?, stream_url = ?, 
-            fall_detection_enabled = ?, inactivity_detection_enabled = ?, 
+        SET
+            name = ?,
+            username = ?,
+            password = ?,
+            stream_url = ?,
+            fall_detection_enabled = ?,
+            inactivity_detection_enabled = ?,
+            fall_detection_start_time = ?,
+            fall_detection_end_time = ?,
+            inactivity_detection_start_time = ?,
+            inactivity_detection_end_time = ?,
+            inactivity_detection_sensitivity = ?,
+            inactivity_detection_duration = ?,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
         """,
-        (name, username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled, camera_id),
+        (
+            name,
+            username,
+            password,
+            stream_url,
+            fall_detection_enabled,
+            inactivity_detection_enabled,
+            fall_detection_start_time,
+            fall_detection_end_time,
+            inactivity_detection_start_time,
+            inactivity_detection_end_time,
+            inactivity_detection_sensitivity,
+            inactivity_detection_duration,
+            camera_id
+        ),
         commit=True
     )
 
