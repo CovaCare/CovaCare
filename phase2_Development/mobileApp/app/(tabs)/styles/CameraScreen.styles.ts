@@ -6,13 +6,15 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   addButton: {
+    margin: 16,
+    padding: 16,
     backgroundColor: "#007BFF",
-    padding: 10,
+    borderRadius: 8,
     alignItems: "center",
-    marginTop: 10,
   },
   addButtonText: {
-    color: "#fff",
+    color: "#FFF",
+    fontSize: 16,
     fontWeight: "bold",
   },
 });

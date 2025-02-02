@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert, Modal, TouchableOpacity, Text } from "react-native";
+import { View, Alert, Modal } from "react-native";
 import {
   getContacts,
   addContact,
@@ -91,13 +91,8 @@ const ContactScreen = () => {
         contacts={contacts}
         onContactSelect={openModal}
         onDeleteContact={handleDeleteContact}
+        onAddContact={() => openModal(null)}
       />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => openModal(null)}
-      >
-        <Text style={styles.addButtonText}>Add New Contact</Text>
-      </TouchableOpacity>
       <Modal visible={modalVisible} animationType="slide">
         <ContactForm
           contact={currentContact}

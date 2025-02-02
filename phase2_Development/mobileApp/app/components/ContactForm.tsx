@@ -20,7 +20,25 @@ export const ContactForm = ({
   const [phone, setPhone] = useState(contact?.phone_number || "");
   const [active, setActive] = useState(contact ? contact.status === 1 : true);
 
+    const [nameError, setNameError] = useState<boolean>(false);
+    const [phoneError, setPhoneError] = useState<boolean>(false);
+
   const handleSave = () => {
+
+    setNameError(false);
+    setPhoneError(false);
+
+        let valid = true;
+    if (name.trim() === "") {
+      setNameError(true);
+      valid = false;
+    }
+    if (phone.trim() === "") {
+      setPhoneError(true);
+      valid = false;
+    }
+    if (!valid) return;
+
     if (contact) {
       //Update
       const updatedContact: Contact = {
@@ -52,21 +70,28 @@ export const ContactForm = ({
       {/* Name Input */}
       <Text style={styles.fieldTitle}>Name</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, nameError && styles.inputError]}
         placeholder="Name"
         placeholderTextColor="#7D7D7D"
         value={name}
-        onChangeText={setName}
+        maxLength={50}
+        onChangeText={(text) => {
+          setName(text);
+          if (text.trim() !== "") setNameError(false);
+        }}
       />
 
       {/* Phone Number Input */}
       <Text style={styles.fieldTitle}>Phone Number</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, phoneError && styles.inputError]}
         placeholder="Phone Number"
         placeholderTextColor="#7D7D7D"
         value={phone}
-        onChangeText={setPhone}
+        onChangeText={(text) => {
+          setPhone(text);
+          if (text.trim() !== "") setPhoneError(false);
+        }}
       />
 
       {/* Active Switch */}

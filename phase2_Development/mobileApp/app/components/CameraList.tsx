@@ -1,18 +1,21 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity, Text } from "react-native";
 import { Camera } from "../api/types/cameraTypes";
 import { CameraListItem } from "./CameraListItem";
+import { styles } from "../(tabs)/styles/CameraScreen.styles";
 
 interface CameraListProps {
   cameras: Camera[];
-  onCameraSelect: (camera: Camera | null) => void;
+  onCameraSelect: (camera: Camera) => void;
   onDeleteCamera: (camera: Camera) => void;
+  onAddCamera: () => void;
 }
 
 export const CameraList = ({
   cameras,
   onCameraSelect,
   onDeleteCamera,
+  onAddCamera,
 }: CameraListProps) => {
   return (
     <FlatList
@@ -25,6 +28,11 @@ export const CameraList = ({
           onDelete={onDeleteCamera}
         />
       )}
+      ListFooterComponent={
+        <TouchableOpacity style={styles.addButton} onPress={onAddCamera}>
+          <Text style={styles.addButtonText}>Add New Camera</Text>
+        </TouchableOpacity>
+      }
     />
   );
 };

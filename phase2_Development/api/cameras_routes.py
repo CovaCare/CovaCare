@@ -10,7 +10,7 @@ def get_cameras():
     cameras = query_db("SELECT * FROM cameras")
     return jsonify([dict(camera) for camera in cameras])
 
-# Get a single camera by ID
+# Get a specific camera
 @cameras_bp.route('/cameras/<int:camera_id>', methods=['GET'])
 def get_camera(camera_id):
     camera = query_db("SELECT * FROM cameras WHERE id = ?", (camera_id,), one=True)
@@ -22,27 +22,57 @@ def get_camera(camera_id):
 @cameras_bp.route('/cameras', methods=['POST'])
 def add_camera():
     data = request.get_json()
-    if not data or not all(key in data for key in ["name"]):
-        abort(400, description="Missing required fields: 'name'")
-    
-    username = data.get("username")
-    password = data.get("password")
-    stream_url = data.get("stream_url")
-    fall_detection_enabled = data.get("fall_detection_enabled", 0)  # Default to 0 (disabled)
-    inactivity_detection_enabled = data.get("inactivity_detection_enabled", 0)  # Default to 0 (disabled)
 
-    conn = get_db_connection()
-    cursor = conn.execute(
+    name = data.get("name", "")
+    username = data.get("username", "")
+    password = data.get("password", "")
+    stream_url = data.get("stream_url", "")
+    fall_detection_enabled = data.get("fall_detection_enabled", 0)
+    inactivity_detection_enabled = data.get("inactivity_detection_enabled", 0)
+
+    fall_detection_start_time = data.get("fall_detection_start_time", "")
+    fall_detection_end_time = data.get("fall_detection_end_time", "")
+    inactivity_detection_start_time = data.get("inactivity_detection_start_time", "")
+    inactivity_detection_end_time = data.get("inactivity_detection_end_time", "")
+
+    inactivity_detection_sensitivity = data.get("inactivity_detection_sensitivity", 50)
+    inactivity_detection_duration = data.get("inactivity_detection_duration", 30)
+
+    result = query_db(
         """
-        INSERT INTO cameras 
-        (name, username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO cameras (
+            name,
+            username,
+            password,
+            stream_url,
+            fall_detection_enabled,
+            inactivity_detection_enabled,
+            fall_detection_start_time,
+            fall_detection_end_time,
+            inactivity_detection_start_time,
+            inactivity_detection_end_time,
+            inactivity_detection_sensitivity,
+            inactivity_detection_duration
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (data["name"], username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled)
+        (
+            name,
+            username,
+            password,
+            stream_url,
+            fall_detection_enabled,
+            inactivity_detection_enabled,
+            fall_detection_start_time,
+            fall_detection_end_time,
+            inactivity_detection_start_time,
+            inactivity_detection_end_time,
+            inactivity_detection_sensitivity,
+            inactivity_detection_duration
+        ),
+        commit=True
     )
-    conn.commit()
-    new_id = cursor.lastrowid
-    conn.close()
+    new_id = result['lastrowid']
 
     new_camera = query_db("SELECT * FROM cameras WHERE id = ?", (new_id,), one=True)
     return jsonify(dict(new_camera)), 201
@@ -59,7 +89,6 @@ def update_camera(camera_id):
     if existing_camera is None:
         abort(404, description="Camera not found")
 
-    # Update only the provided fields
     name = data.get("name", existing_camera["name"])
     username = data.get("username", existing_camera["username"])
     password = data.get("password", existing_camera["password"])
@@ -67,19 +96,49 @@ def update_camera(camera_id):
     fall_detection_enabled = data.get("fall_detection_enabled", existing_camera["fall_detection_enabled"])
     inactivity_detection_enabled = data.get("inactivity_detection_enabled", existing_camera["inactivity_detection_enabled"])
 
-    conn = get_db_connection()
-    conn.execute(
+    fall_detection_start_time = data.get("fall_detection_start_time", existing_camera["fall_detection_start_time"])
+    fall_detection_end_time = data.get("fall_detection_end_time", existing_camera["fall_detection_end_time"])
+    inactivity_detection_start_time = data.get("inactivity_detection_start_time", existing_camera["inactivity_detection_start_time"])
+    inactivity_detection_end_time = data.get("inactivity_detection_end_time", existing_camera["inactivity_detection_end_time"])
+    inactivity_detection_sensitivity = data.get("inactivity_detection_sensitivity", existing_camera["inactivity_detection_sensitivity"])
+    inactivity_detection_duration = data.get("inactivity_detection_duration", existing_camera["inactivity_detection_duration"])
+
+    query_db(
         """
         UPDATE cameras
-        SET name = ?, username = ?, password = ?, stream_url = ?, 
-            fall_detection_enabled = ?, inactivity_detection_enabled = ?, 
+        SET
+            name = ?,
+            username = ?,
+            password = ?,
+            stream_url = ?,
+            fall_detection_enabled = ?,
+            inactivity_detection_enabled = ?,
+            fall_detection_start_time = ?,
+            fall_detection_end_time = ?,
+            inactivity_detection_start_time = ?,
+            inactivity_detection_end_time = ?,
+            inactivity_detection_sensitivity = ?,
+            inactivity_detection_duration = ?,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
         """,
-        (name, username, password, stream_url, fall_detection_enabled, inactivity_detection_enabled, camera_id)
+        (
+            name,
+            username,
+            password,
+            stream_url,
+            fall_detection_enabled,
+            inactivity_detection_enabled,
+            fall_detection_start_time,
+            fall_detection_end_time,
+            inactivity_detection_start_time,
+            inactivity_detection_end_time,
+            inactivity_detection_sensitivity,
+            inactivity_detection_duration,
+            camera_id
+        ),
+        commit=True
     )
-    conn.commit()
-    conn.close()
 
     updated_camera = query_db("SELECT * FROM cameras WHERE id = ?", (camera_id,), one=True)
     return jsonify(dict(updated_camera))
@@ -87,14 +146,9 @@ def update_camera(camera_id):
 # Delete a camera
 @cameras_bp.route('/cameras/<int:camera_id>', methods=['DELETE'])
 def delete_camera(camera_id):
-    # Ensure the camera exists before attempting to delete
     existing_camera = query_db("SELECT * FROM cameras WHERE id = ?", (camera_id,), one=True)
     if existing_camera is None:
         abort(404, description="Camera not found")
 
-    conn = get_db_connection()
-    conn.execute("DELETE FROM cameras WHERE id = ?", (camera_id,))
-    conn.commit()
-    conn.close()
-
+    query_db("DELETE FROM cameras WHERE id = ?", (camera_id,), commit=True)
     return jsonify({"message": "Camera deleted"}), 200

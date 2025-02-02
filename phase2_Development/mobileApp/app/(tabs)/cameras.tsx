@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert, Modal, TouchableOpacity, Text } from "react-native";
+import { View, Alert, Modal } from "react-native";
 import {
   getCameras,
   addCamera,
@@ -89,13 +89,8 @@ const CameraScreen = () => {
         cameras={cameras}
         onCameraSelect={openModal}
         onDeleteCamera={handleDeleteCamera}
+        onAddCamera={() => openModal(null)}
       />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => openModal(null)}
-      >
-        <Text style={styles.addButtonText}>Add New Camera</Text>
-      </TouchableOpacity>
       <Modal visible={modalVisible} animationType="slide">
         <CameraForm
           camera={currentCamera}
