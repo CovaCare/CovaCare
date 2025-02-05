@@ -29,5 +29,5 @@ class AlertService:
 
 if __name__ == "__main__":
     alert_service = AlertService()
-    result = alert_service.send_alert("13062096718", "This is a test alert! from CovaCare!")
+    result = alert_service.send_alert("replace_with_to_number", "This is a test alert! from CovaCare!")
     print(result)
