@@ -1,9 +1,15 @@
 from twilio.rest import Client
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class AlertService:
-    def __init__(self, account_sid, auth_token, from_number):
+    def __init__(self):
+        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+        self.from_number = os.getenv('TWILIO_FROM_NUMBER')
         self.client = Client(account_sid, auth_token)
-        self.from_number = from_number
         self.alert_sent = False 
 
     def send_alert(self, to_number, message):
@@ -22,10 +28,6 @@ class AlertService:
         return message.sid
 
 if __name__ == "__main__":
-    account_sid = ''
-    auth_token = ''
-    from_number = ''
-
-    alert_service = AlertService(account_sid, auth_token, from_number)
-    result = alert_service.send_alert("replace with to number", "This is a test alert! from CovaCare!")
+    alert_service = AlertService()
+    result = alert_service.send_alert("13062096718", "This is a test alert! from CovaCare!")
     print(result)
