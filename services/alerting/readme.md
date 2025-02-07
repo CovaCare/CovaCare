@@ -1,4 +1,4 @@
-# SMS Feature
+# SMS Text Alert Feature
 
 ### Overview
 
