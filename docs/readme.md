@@ -1,6 +1,8 @@
 # Documents
-Please take a look at each document containing system architecture, planning, prototypes, and testing documentation.
+
+This folder contains documentation relating to system architecture, planning, prototypes, and testing.
 
 - [Diagrams](./diagrams/)
 - [Planning](./planning/)
 - [Prototypes](./prototypes/)
+- [Testing](./testing/)
