@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Text, ScrollView } from "react-native";
+import { View, TouchableOpacity, Text, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { styles } from "../styles/BaseForm.styles";
 
 interface BaseFormProps {
@@ -19,7 +19,11 @@ export const BaseForm = ({
   const ContentWrapper = scrollable ? ScrollView : View;
 
   return (
-    <View style={styles.outerContainer}>
+    <KeyboardAvoidingView 
+      style={styles.outerContainer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+    >
       <View style={styles.headerContainer}>
         <Text style={styles.formTitle}>{title}</Text>
       </View>
@@ -38,6 +42,6 @@ export const BaseForm = ({
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };

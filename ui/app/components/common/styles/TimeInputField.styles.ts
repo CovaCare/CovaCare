@@ -1,16 +1,19 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  timeRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
   label: {
     fontSize: 14,
     fontWeight: "bold",
-    marginBottom: 7,
+    marginBottom: 8,
+  },
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  timePickerContainer: {
+    flex: 1,
   },
   timeInput: {
     flex: 0.45,
@@ -19,4 +22,12 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
   },
+  endTimeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  allDayCheckbox: {
+    flex: 1,
+  }
 });
