@@ -3,6 +3,7 @@ import { Contact, NewContact } from "../api/types/contactTypes";
 import { BaseForm } from "./common/components/BaseForm";
 import { FormField } from "./common/components/FormField";
 import { ToggleField } from "./common/components/ToggleField";
+import { Card } from "./common/components/Card";
 
 interface ContactFormProps {
   contact: Contact | null;
@@ -67,25 +68,34 @@ export const ContactForm = ({
       onSave={handleSave}
       onCancel={onCancel}
     >
-      <FormField
-        label="Name"
-        value={name}
-        onChangeText={setName}
-        error={nameError}
-        placeholder="Contact Name"
-        maxLength={50}
-      />
+      <Card 
+        title="Contact Information" 
+        description="Enter the contact's details for emergency notifications"
+      >
+        <FormField
+          label="Name"
+          value={name}
+          onChangeText={setName}
+          error={nameError}
+          placeholder="Contact Name"
+          maxLength={50}
+        />
 
-      <FormField
-        label="Phone Number"
-        value={phone}
-        onChangeText={setPhone}
-        error={phoneError}
-        placeholder="Phone Number"
-        keyboardType="numeric"
-      />
+        <FormField
+          label="Phone Number"
+          value={phone}
+          onChangeText={setPhone}
+          error={phoneError}
+          placeholder="Phone Number"
+          keyboardType="numeric"
+        />
 
-      <ToggleField label="Active" value={active} onValueChange={setActive} />
+        <ToggleField 
+          label="Active" 
+          value={active} 
+          onValueChange={setActive} 
+        />
+      </Card>
     </BaseForm>
   );
 };

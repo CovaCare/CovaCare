@@ -3,9 +3,8 @@ import { View } from "react-native";
 import { Camera, NewCamera } from "../api/types/cameraTypes";
 import { BaseForm } from "./common/components/BaseForm";
 import { FormField } from "./common/components/FormField";
-import { ToggleField } from "./common/components/ToggleField";
-import { TimeInputField } from "./common/components/TimeInputField";
-import { SliderField } from "./common/components/SliderField";
+import { Card } from "./common/components/Card";
+import { DetectionSection } from "./common/components/DetectionSection";
 
 interface CameraFormProps {
   camera: Camera | null;
@@ -78,30 +77,26 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
     if (!valid) return;
 
     const cameraData = {
+      ...(camera && { id: camera.id }),
       name,
       username,
       password,
       stream_url,
       fall_detection_enabled: fall_detection_enabled ? 1 : 0,
-      inactivity_detection_enabled: inactivity_detection_enabled ? 1 : 0,
       fall_detection_start_time: fallDetectionStartTime,
       fall_detection_end_time: fallDetectionEndTime,
+      inactivity_detection_enabled: inactivity_detection_enabled ? 1 : 0,
       inactivity_detection_start_time: inactivityDetectionStartTime,
       inactivity_detection_end_time: inactivityDetectionEndTime,
       inactivity_detection_sensitivity: inactivitySensitivity,
       inactivity_detection_duration: parseInt(inactivityDuration, 10),
-    };
-
-    if (camera) {
-      (onSave as (camera: Camera) => Promise<void>)({
-        ...cameraData,
-        id: camera.id,
+      ...(camera && {
         created_at: camera.created_at,
         updated_at: camera.updated_at,
-      });
-    } else {
-      (onSave as (camera: NewCamera) => Promise<void>)(cameraData);
-    }
+      }),
+    };
+
+    onSave(cameraData as any);
   };
 
   return (
@@ -110,86 +105,67 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
       onSave={handleSave}
       onCancel={onCancel}
     >
-      <FormField
-        label="Name"
-        value={name}
-        onChangeText={setName}
-        error={nameError}
-        placeholder="Enter camera name"
-        maxLength={50}
-      />
-
-      <FormField
-        label="Username"
-        value={username}
-        onChangeText={setUsername}
-        error={usernameError}
-        placeholder="Enter username"
-      />
-
-      <FormField
-        label="Password"
-        value={password}
-        onChangeText={setPassword}
-        error={passwordError}
-        placeholder="Enter password"
-        secureTextEntry
-      />
-
-      <FormField
-        label="Stream URL"
-        value={stream_url}
-        onChangeText={setStreamUrl}
-        error={streamUrlError}
-        placeholder="Enter camera IP"
-      />
-
-      <ToggleField
-        label="Fall Detection Enabled"
-        value={fall_detection_enabled}
-        onValueChange={setFallDetectionEnabled}
-      />
-
-      {fall_detection_enabled && (
-        <TimeInputField
-          label="Fall Detection Active Hours"
-          startTime={fallDetectionStartTime}
-          endTime={fallDetectionEndTime}
-          onStartTimeChange={setFallDetectionStartTime}
-          onEndTimeChange={setFallDetectionEndTime}
+      <Card 
+        title="Camera Details" 
+        description="Enter the basic information for your camera"
+      >
+        <FormField
+          label="Name"
+          value={name}
+          onChangeText={setName}
+          error={nameError}
+          placeholder="Camera Name"
         />
-      )}
+        <FormField
+          label="Username"
+          value={username}
+          onChangeText={setUsername}
+          error={usernameError}
+          placeholder="Camera Username"
+        />
+        <FormField
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+          error={passwordError}
+          placeholder="Camera Password"
+          secureTextEntry
+        />
+        <FormField
+          label="Stream URL"
+          value={stream_url}
+          onChangeText={setStreamUrl}
+          error={streamUrlError}
+          placeholder="192.168.0.100"
+        />
+      </Card>
 
-      <ToggleField
-        label="Inactivity Detection Enabled"
-        value={inactivity_detection_enabled}
-        onValueChange={setInactivityDetectionEnabled}
+      <DetectionSection
+        title="Fall Detection"
+        description="Configure fall detection settings"
+        enabled={fall_detection_enabled}
+        onEnabledChange={setFallDetectionEnabled}
+        startTime={fallDetectionStartTime}
+        endTime={fallDetectionEndTime}
+        onStartTimeChange={setFallDetectionStartTime}
+        onEndTimeChange={setFallDetectionEndTime}
       />
 
-      {inactivity_detection_enabled && (
-        <View>
-          <TimeInputField
-            label="Inactivity Detection Hours"
-            startTime={inactivityDetectionStartTime}
-            endTime={inactivityDetectionEndTime}
-            onStartTimeChange={setInactivityDetectionStartTime}
-            onEndTimeChange={setInactivityDetectionEndTime}
-          />
-
-          <SliderField
-            label="Sensitivity"
-            value={inactivitySensitivity}
-            onValueChange={setInactivitySensitivity}
-          />
-
-          <FormField
-            label="Duration (minutes)"
-            value={inactivityDuration}
-            onChangeText={setInactivityDuration}
-            keyboardType="numeric"
-          />
-        </View>
-      )}
+      <DetectionSection
+        title="Inactivity Detection"
+        description="Configure inactivity monitoring settings"
+        enabled={inactivity_detection_enabled}
+        onEnabledChange={setInactivityDetectionEnabled}
+        startTime={inactivityDetectionStartTime}
+        endTime={inactivityDetectionEndTime}
+        onStartTimeChange={setInactivityDetectionStartTime}
+        onEndTimeChange={setInactivityDetectionEndTime}
+        showSensitivity={true}
+        sensitivity={inactivitySensitivity}
+        onSensitivityChange={setInactivitySensitivity}
+        duration={inactivityDuration}
+        onDurationChange={setInactivityDuration}
+      />
     </BaseForm>
   );
 };
