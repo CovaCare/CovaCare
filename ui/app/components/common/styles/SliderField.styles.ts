@@ -6,8 +6,13 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
   },
+  labelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    minWidth: 100,
+  },
   label: {
-    marginRight: 10,
+    marginRight: 4,
     fontSize: 14,
     fontWeight: "bold",
   },

@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import Slider from "@react-native-community/slider";
 import { styles } from "../styles/SliderField.styles";
+import { InfoButton } from "./InfoButton";
 
 interface SliderFieldProps {
   label: string;
@@ -11,6 +12,7 @@ interface SliderFieldProps {
   step?: number;
   showValue?: boolean;
   unit?: string;
+  info?: string;
 }
 
 export const SliderField = ({
@@ -21,11 +23,15 @@ export const SliderField = ({
   maximumValue = 100,
   step = 1,
   showValue = true,
-  unit = "%"
+  unit = "%",
+  info
 }: SliderFieldProps) => {
   return (
     <View style={styles.sliderRow}>
-      <Text style={styles.label}>{label}</Text>
+      <View style={styles.labelContainer}>
+        <Text style={styles.label}>{label}</Text>
+        {info && <InfoButton title={label} message={info} />}
+      </View>
       <Slider
         style={styles.slider}
         minimumValue={minimumValue}

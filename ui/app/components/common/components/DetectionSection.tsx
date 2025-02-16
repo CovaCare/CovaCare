@@ -60,6 +60,7 @@ export const DetectionSection = ({
               label="Sensitivity"
               value={sensitivity}
               onValueChange={onSensitivityChange}
+              info="Adjust how sensitive the system is to detecting inactivity. Higher values will trigger alerts more quickly when there is less movement."
             />
           )}
           
