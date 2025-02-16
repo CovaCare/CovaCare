@@ -44,4 +44,17 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  testButton: {
+    backgroundColor: '#007BFF',
+    padding: 8,
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
 });
