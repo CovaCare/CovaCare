@@ -21,7 +21,10 @@ export const ContactListItem = ({
           <Text style={styles.contactName}>{contact.name}</Text>
           <Text style={styles.contactPhone}>{contact.phone_number}</Text>
           <Text style={styles.contactStatus}>
-            Status: {contact.status === 1 ? "Active" : "Inactive"}
+            Status:{' '}
+            <Text style={contact.status === 1 ? styles.active : styles.inactive}>
+              {contact.status === 1 ? "Active" : "Inactive"}
+            </Text>
           </Text>
         </View>
       </TouchableOpacity>

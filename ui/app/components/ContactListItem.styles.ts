@@ -24,7 +24,16 @@ export const styles = StyleSheet.create({
   },
   contactStatus: {
     fontSize: 14,
-    color: "#999",
+    color: "#333",
+    marginTop: 4,
+  },
+  active: {
+    color: "#4CAF50",
+    fontWeight: "500",
+  },
+  inactive: {
+    color: "#FF5252",
+    fontWeight: "500",
   },
   deleteButton: {
     backgroundColor: "#ff5252",
