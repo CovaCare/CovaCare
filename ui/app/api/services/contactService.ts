@@ -22,3 +22,8 @@ export const deleteContact = async (
   const response = await apiClient.delete(`/contacts/${contact.id}`);
   return response.data;
 };
+
+export const testAlertContact = async (contactId: number): Promise<{ message: string }> => {
+  const response = await apiClient.post(`/contacts/${contactId}/test-alert`);
+  return response.data;
+};

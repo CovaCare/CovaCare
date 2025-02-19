@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   cameraItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     padding: 16,
     marginVertical: 8,
     marginHorizontal: 16,
@@ -14,13 +14,34 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+  infoContainer: {
+    flex: 1,
+    marginRight: 16,
+  },
   cameraName: {
     fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 4,
   },
   cameraDetails: {
     fontSize: 14,
     color: "#666",
+    marginBottom: 8,
+  },
+  detectionStatus: {
+    gap: 4,
+  },
+  statusText: {
+    fontSize: 14,
+    color: "#333",
+  },
+  enabled: {
+    color: "#4CAF50",
+    fontWeight: "500",
+  },
+  disabled: {
+    color: "#FF5252",
+    fontWeight: "500",
   },
   deleteButton: {
     backgroundColor: "#ff5252",

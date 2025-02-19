@@ -1,31 +1,26 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  formContainer: {
+  outerContainer: {
     flex: 1,
+  },
+  headerContainer: {
     padding: 16,
-    justifyContent: "center",
+    backgroundColor: "#FFF",
+  },
+  scrollContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 120,
+  },
+  container: {
+    padding: 16,
   },
   formTitle: {
+    marginTop: 35,
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 24,
     textAlign: "center",
-  },
-  fieldTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginBottom: 7,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-  },
-  inputError: {
-    borderColor: "#FF5252",
   },
   buttonContainer: {
     position: "absolute",
@@ -55,11 +50,5 @@ export const styles = StyleSheet.create({
   buttonText: {
     color: "#FFF",
     fontWeight: "bold",
-  },
-  switchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 16,
   },
 });

@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { View } from "react-native";
 import { Camera, NewCamera } from "../api/types/cameraTypes";
-import { Text, View, TouchableOpacity, Switch, TextInput, ScrollView } from "react-native";
-import Slider from "@react-native-community/slider";
-import { styles } from "./CameraForm.styles";
+import { BaseForm } from "./common/components/BaseForm";
+import { FormField } from "./common/components/FormField";
+import { Card } from "./common/components/Card";
+import { DetectionSection } from "./common/components/DetectionSection";
 
 interface CameraFormProps {
   camera: Camera | null;
@@ -74,202 +76,96 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
 
     if (!valid) return;
 
-    if (camera) {
-      //Update
-      const updatedCamera: Camera = {
-        id: camera.id,
-        name,
-        username,
-        password,
-        stream_url,
-        fall_detection_enabled: fall_detection_enabled ? 1 : 0,
-        inactivity_detection_enabled: inactivity_detection_enabled ? 1 : 0,
-        fall_detection_start_time: fallDetectionStartTime,
-        fall_detection_end_time: fallDetectionEndTime,
-        inactivity_detection_start_time: inactivityDetectionStartTime,
-        inactivity_detection_end_time: inactivityDetectionEndTime,
-        inactivity_detection_sensitivity: inactivitySensitivity,
-        inactivity_detection_duration: parseInt(inactivityDuration, 10),
+    const cameraData = {
+      ...(camera && { id: camera.id }),
+      name,
+      username,
+      password,
+      stream_url,
+      fall_detection_enabled: fall_detection_enabled ? 1 : 0,
+      fall_detection_start_time: fallDetectionStartTime,
+      fall_detection_end_time: fallDetectionEndTime,
+      inactivity_detection_enabled: inactivity_detection_enabled ? 1 : 0,
+      inactivity_detection_start_time: inactivityDetectionStartTime,
+      inactivity_detection_end_time: inactivityDetectionEndTime,
+      inactivity_detection_sensitivity: inactivitySensitivity,
+      inactivity_detection_duration: parseInt(inactivityDuration, 10),
+      ...(camera && {
         created_at: camera.created_at,
         updated_at: camera.updated_at,
-      };
-      (onSave as (camera: Camera) => Promise<void>)(updatedCamera);
-    } else {
-      //Add
-      const newCamera: NewCamera = {
-        name,
-        username,
-        password,
-        stream_url,
-        fall_detection_enabled: fall_detection_enabled ? 1 : 0,
-        inactivity_detection_enabled: inactivity_detection_enabled ? 1 : 0,
-        fall_detection_start_time: fallDetectionStartTime,
-        fall_detection_end_time: fallDetectionEndTime,
-        inactivity_detection_start_time: inactivityDetectionStartTime,
-        inactivity_detection_end_time: inactivityDetectionEndTime,
-        inactivity_detection_sensitivity: inactivitySensitivity,
-        inactivity_detection_duration: parseInt(inactivityDuration, 10),
-      };
-      (onSave as (camera: NewCamera) => Promise<void>)(newCamera);
-    }
+      }),
+    };
+
+    onSave(cameraData as any);
   };
 
   return (
-    <View style={styles.outerContainer}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.formTitle}>
-          {camera ? "Edit Camera" : "Add New Camera"}
-        </Text>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.fieldTitle}>Name</Text>
-        <TextInput
-          style={[styles.input, nameError && styles.inputError]}
-          placeholder="Camera Name"
-          placeholderTextColor="#7D7D7D"
+    <BaseForm
+      title={camera ? "Edit Camera" : "Add New Camera"}
+      onSave={handleSave}
+      onCancel={onCancel}
+    >
+      <Card 
+        title="Camera Details" 
+        description="Enter the basic information for your camera"
+      >
+        <FormField
+          label="Name"
           value={name}
-          maxLength={50}
-          onChangeText={(text) => {
-            setName(text);
-            if (text.trim() !== "") setNameError(false);
-          }}
+          onChangeText={setName}
+          error={nameError}
+          placeholder="Camera Name"
         />
-
-        <Text style={styles.fieldTitle}>User Name</Text>
-        <TextInput
-          style={[styles.input, usernameError && styles.inputError]}
-          placeholder="admin"
-          placeholderTextColor="#7D7D7D"
+        <FormField
+          label="Username"
           value={username}
-          onChangeText={(text) => {
-            setUsername(text);
-            if (text.trim() !== "") setUsernameError(false);
-          }}
+          onChangeText={setUsername}
+          error={usernameError}
+          placeholder="Camera Username"
         />
-
-        <Text style={styles.fieldTitle}>Password</Text>
-        <TextInput
-          style={[styles.input, passwordError && styles.inputError]}
-          placeholder="••••••"
-          placeholderTextColor="#7D7D7D"
-          secureTextEntry
+        <FormField
+          label="Password"
           value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            if (text !== "") setPasswordError(false);
-          }}
+          onChangeText={setPassword}
+          error={passwordError}
+          placeholder="Camera Password"
+          secureTextEntry
         />
-
-        <Text style={styles.fieldTitle}>Stream URL</Text>
-        <TextInput
-          style={[styles.input, streamUrlError && styles.inputError]}
-          placeholder="192.168.0.100"
-          placeholderTextColor="#7D7D7D"
+        <FormField
+          label="Stream URL"
           value={stream_url}
-          onChangeText={(text) => {
-            setStreamUrl(text);
-            if (text.trim() !== "") setStreamUrlError(false);
-          }}
+          onChangeText={setStreamUrl}
+          error={streamUrlError}
+          placeholder="192.168.0.100"
         />
+      </Card>
 
-        <View style={styles.switchContainer}>
-          <Text>Fall Detection Enabled</Text>
-          <Switch
-            value={fall_detection_enabled}
-            onValueChange={setFallDetectionEnabled}
-          />
-        </View>
+      <DetectionSection
+        title="Fall Detection"
+        description="Configure fall detection settings"
+        enabled={fall_detection_enabled}
+        onEnabledChange={setFallDetectionEnabled}
+        startTime={fallDetectionStartTime}
+        endTime={fallDetectionEndTime}
+        onStartTimeChange={setFallDetectionStartTime}
+        onEndTimeChange={setFallDetectionEndTime}
+      />
 
-        {fall_detection_enabled && (
-          <View style={styles.detectionSection}>
-            <Text style={styles.detectionHeader}>
-              Fall Detection Active Hours
-            </Text>
-            <View style={styles.timeRow}>
-              <Text>Start Time</Text>
-              <TextInput
-                style={styles.timeInput}
-                value={fallDetectionStartTime}
-                onChangeText={setFallDetectionStartTime}
-                placeholder="HH:MM"
-              />
-              <Text>End Time</Text>
-              <TextInput
-                style={styles.timeInput}
-                value={fallDetectionEndTime}
-                onChangeText={setFallDetectionEndTime}
-                placeholder="HH:MM"
-              />
-            </View>
-          </View>
-        )}
-
-        <View style={styles.switchContainer}>
-          <Text>Inactivity Detection Enabled</Text>
-          <Switch
-            value={inactivity_detection_enabled}
-            onValueChange={setInactivityDetectionEnabled}
-          />
-        </View>
-
-        {inactivity_detection_enabled && (
-          <View style={styles.detectionSection}>
-            <Text style={styles.detectionHeader}>
-              Inactivity Detection Settings
-            </Text>
-
-            <View style={styles.timeRow}>
-              <Text>Start Time</Text>
-              <TextInput
-                style={styles.timeInput}
-                value={inactivityDetectionStartTime}
-                onChangeText={setInactivityDetectionStartTime}
-                placeholder="HH:MM"
-              />
-              <Text>End Time</Text>
-              <TextInput
-                style={styles.timeInput}
-                value={inactivityDetectionEndTime}
-                onChangeText={setInactivityDetectionEndTime}
-                placeholder="HH:MM"
-              />
-            </View>
-
-            <View style={styles.sliderRow}>
-              <Text style={styles.sliderLabel}>Sensitivity:</Text>
-              <Slider
-                style={{ flex: 1 }}
-                minimumValue={0}
-                maximumValue={100}
-                step={1}
-                value={inactivitySensitivity}
-                onValueChange={(val) => setInactivitySensitivity(val)}
-              />
-              <Text>{inactivitySensitivity}%</Text>
-            </View>
-
-            <View style={styles.sliderRow}>
-              <Text>Duration (min):</Text>
-              <TextInput
-                style={styles.durationInput}
-                value={inactivityDuration}
-                onChangeText={setInactivityDuration}
-                keyboardType="numeric"
-              />
-            </View>
-          </View>
-        )}
-      </ScrollView>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <DetectionSection
+        title="Inactivity Detection"
+        description="Configure inactivity monitoring settings"
+        enabled={inactivity_detection_enabled}
+        onEnabledChange={setInactivityDetectionEnabled}
+        startTime={inactivityDetectionStartTime}
+        endTime={inactivityDetectionEndTime}
+        onStartTimeChange={setInactivityDetectionStartTime}
+        onEndTimeChange={setInactivityDetectionEndTime}
+        showSensitivity={true}
+        sensitivity={inactivitySensitivity}
+        onSensitivityChange={setInactivitySensitivity}
+        duration={inactivityDuration}
+        onDurationChange={setInactivityDuration}
+      />
+    </BaseForm>
   );
 };

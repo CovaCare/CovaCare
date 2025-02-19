@@ -1,6 +1,11 @@
 # Contacts Endpoints
 from flask import Blueprint, request, jsonify, abort
 from db import get_db_connection, query_db
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from services.alerting.alert_service import AlertService
 
 contacts_bp = Blueprint('contacts', __name__)
 
@@ -75,4 +80,18 @@ def test_alert_contact(contact_id):
     contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)
     if contact is None:
         abort(404, description="Contact not found")
-    return jsonify({"message": f"Test alert sent to {contact['name']} at {contact['phone_number']}."})
+    
+    alert_service = AlertService()
+    try:
+        message = "This is a test alert from CovaCare!"
+        result = alert_service.send_alert(contact['phone_number'], message)
+        return jsonify({
+            "success": True,
+            "message": f"Test alert sent to {contact['name']} at {contact['phone_number']}.",
+            "sid": result
+        })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Failed to send test alert: {str(e)}"
+        }), 500

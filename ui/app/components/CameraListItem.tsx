@@ -15,17 +15,34 @@ export const CameraListItem = ({
   onDelete,
 }: CameraListItemProps) => {
   return (
-    <View style={styles.cameraItem}>
-      <TouchableOpacity onPress={() => onSelect(camera)} style={{ flex: 1 }}>
+    <TouchableOpacity
+      style={styles.cameraItem}
+      onPress={() => onSelect(camera)}
+    >
+      <View style={styles.infoContainer}>
         <Text style={styles.cameraName}>{camera.name}</Text>
-        <Text style={styles.cameraDetails}>IP: {camera.stream_url}</Text>
-      </TouchableOpacity>
+        <Text style={styles.cameraDetails}>{camera.stream_url}</Text>
+        <View style={styles.detectionStatus}>
+          <Text style={styles.statusText}>
+            Fall Detection: 
+            <Text style={camera.fall_detection_enabled ? styles.enabled : styles.disabled}>
+              {camera.fall_detection_enabled ? " Enabled" : " Disabled"}
+            </Text>
+          </Text>
+          <Text style={styles.statusText}>
+            Inactivity Detection: 
+            <Text style={camera.inactivity_detection_enabled ? styles.enabled : styles.disabled}>
+              {camera.inactivity_detection_enabled ? " Enabled" : " Disabled"}
+            </Text>
+          </Text>
+        </View>
+      </View>
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => onDelete(camera)}
       >
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 };
