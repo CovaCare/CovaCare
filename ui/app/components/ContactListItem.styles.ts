@@ -24,7 +24,16 @@ export const styles = StyleSheet.create({
   },
   contactStatus: {
     fontSize: 14,
-    color: "#999",
+    color: "#333",
+    marginTop: 4,
+  },
+  active: {
+    color: "#4CAF50",
+    fontWeight: "500",
+  },
+  inactive: {
+    color: "#FF5252",
+    fontWeight: "500",
   },
   deleteButton: {
     backgroundColor: "#ff5252",
@@ -33,6 +42,19 @@ export const styles = StyleSheet.create({
   },
   deleteButtonText: {
     color: "#fff",
+    fontSize: 14,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  testButton: {
+    backgroundColor: '#007BFF',
+    padding: 8,
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: '#fff',
     fontSize: 14,
   },
 });

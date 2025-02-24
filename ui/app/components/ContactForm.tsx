@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Contact, NewContact } from "../api/types/contactTypes";
-import { Text, View, TouchableOpacity, TextInput, Switch } from "react-native";
-import { styles } from "./ContactForm.styles";
+import { BaseForm } from "./common/components/BaseForm";
+import { FormField } from "./common/components/FormField";
+import { ToggleField } from "./common/components/ToggleField";
+import { Card } from "./common/components/Card";
 
 interface ContactFormProps {
   contact: Contact | null;
@@ -19,16 +21,15 @@ export const ContactForm = ({
   const [name, setName] = useState(contact?.name || "");
   const [phone, setPhone] = useState(contact?.phone_number || "");
   const [active, setActive] = useState(contact ? contact.status === 1 : true);
-
-    const [nameError, setNameError] = useState<boolean>(false);
-    const [phoneError, setPhoneError] = useState<boolean>(false);
+  const [nameError, setNameError] = useState<boolean>(false);
+  const [phoneError, setPhoneError] = useState<boolean>(false);
 
   const handleSave = () => {
-
     setNameError(false);
     setPhoneError(false);
 
-        let valid = true;
+    let valid = true;
+
     if (name.trim() === "") {
       setNameError(true);
       valid = false;
@@ -62,53 +63,39 @@ export const ContactForm = ({
   };
 
   return (
-    <View style={styles.formContainer}>
-      <Text style={styles.formTitle}>
-        {contact ? "Edit Contact" : "Add New Contact"}
-      </Text>
+    <BaseForm
+      title={contact ? "Edit Contact" : "Add New Contact"}
+      onSave={handleSave}
+      onCancel={onCancel}
+    >
+      <Card 
+        title="Contact Information" 
+        description="Enter the contact's details for emergency notifications"
+      >
+        <FormField
+          label="Name"
+          value={name}
+          onChangeText={setName}
+          error={nameError}
+          placeholder="Contact Name"
+          maxLength={50}
+        />
 
-      {/* Name Input */}
-      <Text style={styles.fieldTitle}>Name</Text>
-      <TextInput
-        style={[styles.input, nameError && styles.inputError]}
-        placeholder="Name"
-        placeholderTextColor="#7D7D7D"
-        value={name}
-        maxLength={50}
-        onChangeText={(text) => {
-          setName(text);
-          if (text.trim() !== "") setNameError(false);
-        }}
-      />
+        <FormField
+          label="Phone Number"
+          value={phone}
+          onChangeText={setPhone}
+          error={phoneError}
+          placeholder="Phone Number"
+          keyboardType="numeric"
+        />
 
-      {/* Phone Number Input */}
-      <Text style={styles.fieldTitle}>Phone Number</Text>
-      <TextInput
-        style={[styles.input, phoneError && styles.inputError]}
-        placeholder="Phone Number"
-        placeholderTextColor="#7D7D7D"
-        value={phone}
-        onChangeText={(text) => {
-          setPhone(text);
-          if (text.trim() !== "") setPhoneError(false);
-        }}
-      />
-
-      {/* Active Switch */}
-      <View style={styles.switchContainer}>
-        <Text>Active?</Text>
-        <Switch value={active} onValueChange={setActive} />
-      </View>
-
-      {/* Buttons at the bottom */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+        <ToggleField 
+          label="Active" 
+          value={active} 
+          onValueChange={setActive} 
+        />
+      </Card>
+    </BaseForm>
   );
 };
