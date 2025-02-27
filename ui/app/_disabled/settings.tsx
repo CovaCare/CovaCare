@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { styles } from "./styles/SettingsScreen.styles";
+import { styles } from "../(tabs)/styles/SettingsScreen.styles";
 
 const SettingScreen = () => {
   return (

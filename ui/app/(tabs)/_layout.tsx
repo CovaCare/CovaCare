@@ -20,15 +20,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="settings" color={color} size={24} />
-          ),
-        }}
-      />
+      {/* Disable Settings Tabs - Temporarily */}
       <Tabs.Screen
         name="cameras"
         options={{
