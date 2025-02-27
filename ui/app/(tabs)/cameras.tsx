@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert, Modal } from "react-native";
+import { View, Alert, Modal, RefreshControl } from "react-native";
 import {
   getCameras,
   addCamera,
@@ -15,17 +15,25 @@ const CameraScreen = () => {
   const [cameras, setCameras] = useState<Camera[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchCameras = async () => {
+    try {
+      const data = await getCameras();
+      setCameras(data);
+    } catch (error) {
+      console.error("Error fetching cameras:", error);
+      Alert.alert("Error", "Failed to fetch cameras.");
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchCameras();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    const fetchCameras = async () => {
-      try {
-        const data = await getCameras();
-        setCameras(data);
-      } catch (error) {
-        console.error("Error fetching cameras:", error);
-        Alert.alert("Error", "Failed to fetch cameras.");
-      }
-    };
     fetchCameras();
   }, []);
 
@@ -90,6 +98,8 @@ const CameraScreen = () => {
         onCameraSelect={openModal}
         onDeleteCamera={handleDeleteCamera}
         onAddCamera={() => openModal(null)}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
       <Modal visible={modalVisible} animationType="slide">
         <CameraForm
