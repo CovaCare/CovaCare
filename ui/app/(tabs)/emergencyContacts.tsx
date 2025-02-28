@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert, Modal } from "react-native";
+import { View, Alert, Modal, RefreshControl } from "react-native";
 import {
   getContacts,
   addContact,
@@ -15,17 +15,25 @@ const ContactScreen = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentContact, setCurrentContact] = useState<Contact | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchContacts = async () => {
+    try {
+      const data = await getContacts();
+      setContacts(data);
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      Alert.alert("Error", "Failed to fetch contacts.");
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchContacts();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const data = await getContacts();
-        setContacts(data);
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-        Alert.alert("Error", "Failed to fetch contacts.");
-      }
-    };
     fetchContacts();
   }, []);
 
@@ -92,6 +100,8 @@ const ContactScreen = () => {
         onContactSelect={openModal}
         onDeleteContact={handleDeleteContact}
         onAddContact={() => openModal(null)}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
       <Modal visible={modalVisible} animationType="slide">
         <ContactForm

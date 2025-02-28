@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, TouchableOpacity, Text } from "react-native";
+import { FlatList, TouchableOpacity, Text, RefreshControl } from "react-native";
 import { Camera } from "../api/types/cameraTypes";
 import { CameraListItem } from "./CameraListItem";
 import { styles } from "../(tabs)/styles/CameraScreen.styles";
@@ -9,6 +9,8 @@ interface CameraListProps {
   onCameraSelect: (camera: Camera) => void;
   onDeleteCamera: (camera: Camera) => void;
   onAddCamera: () => void;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }
 
 export const CameraList = ({
@@ -16,6 +18,8 @@ export const CameraList = ({
   onCameraSelect,
   onDeleteCamera,
   onAddCamera,
+  refreshing = false,
+  onRefresh,
 }: CameraListProps) => {
   return (
     <FlatList
@@ -32,6 +36,9 @@ export const CameraList = ({
         <TouchableOpacity style={styles.addButton} onPress={onAddCamera}>
           <Text style={styles.addButtonText}>Add New Camera</Text>
         </TouchableOpacity>
+      }
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     />
   );
