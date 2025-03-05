@@ -17,15 +17,18 @@ key_points = {
 
 def process_pose(frame, draw_landmarks=False):
     results = pose_model.process(frame)
-    keypoints_data = []
+    fall_keypoints = []
 
     if results.pose_landmarks:
+        inactivity_keypoints = np.array(
+            [[lmk.x, lmk.y] for lmk in results.pose_landmarks.landmark]
+        )
         for point_index in key_points.values():
             landmark = results.pose_landmarks.landmark[point_index]
-            keypoints_data.extend([landmark.x, landmark.y, landmark.z])
+            fall_keypoints.extend([landmark.x, landmark.y, landmark.z])
 
         if draw_landmarks:
             mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
-    return keypoints_data, frame
+    return fall_keypoints, inactivity_keypoints, frame
 
