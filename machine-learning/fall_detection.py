@@ -37,7 +37,7 @@ class FallDetector:
         
         if len(self.pose_data_window) == FALL_WINDOW_SIZE:
             sequence_data = np.array(self.pose_data_window).reshape(1, FALL_WINDOW_SIZE, FALL_INPUT_SIZE)
-            prediction = self.model.predict(sequence_data)
+            prediction = self.model.predict(sequence_data, verbose=0)
             fall_class = np.argmax(prediction)
             self.prediction_history.append(fall_class)
             return fall_class
