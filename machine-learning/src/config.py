@@ -11,7 +11,7 @@ MODEL_L2_REGULARIZATION = 0.01
 MODEL_RECURRENT_DROPOUT = 0.2
 MODEL_DROPOUT = 0.2
 
-API_BASE_URL = "http://localhost:5001"
+API_BASE_URL = "https://localhost:5001"
 API_CAMERA_ROUTE = "/cameras"
 API_ALERT_ROUTE = "/contacts/alert-all"
 API_POLLING_PERIOD = 10
