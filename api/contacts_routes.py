@@ -5,7 +5,7 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from services.alerting.alert_service import AlertService
+from services.alerting.src.alert_service import AlertService
 
 contacts_bp = Blueprint('contacts', __name__)
 
@@ -95,3 +95,49 @@ def test_alert_contact(contact_id):
             "success": False,
             "message": f"Failed to send test alert: {str(e)}"
         }), 500
+    
+# Alert all active contacts
+@contacts_bp.route('/contacts/alert-all', methods=['POST'])
+def alert_all_contacts():
+    data = request.get_json()
+    
+    message = data.get("message")
+    if not message:
+        return jsonify({
+            "success": False,
+            "message": "No message provided in the request."
+        }), 400
+
+    contacts = query_db("SELECT * FROM contacts WHERE status = 1")
+    
+    if not contacts:
+        return jsonify({
+            "success": False,
+            "message": "No active contacts found."
+        }), 404
+    
+    alert_service = AlertService()
+    failed_contacts = []
+    
+    for contact in contacts:
+        try:
+            result = alert_service.send_alert(contact['phone_number'], message)
+            print(f"Alert sent to {contact['name']} at {contact['phone_number']}. SID: {result}")
+        except Exception as e:
+            failed_contacts.append({
+                "name": contact['name'],
+                "phone_number": contact['phone_number'],
+                "error": str(e)
+            })
+    
+    if failed_contacts:
+        return jsonify({
+            "success": False,
+            "message": "Some alerts failed.",
+            "failed_contacts": failed_contacts
+        }), 500
+    
+    return jsonify({
+        "success": True,
+        "message": "Alerts sent to all active contacts."
+    })
