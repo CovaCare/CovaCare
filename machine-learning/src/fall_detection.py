@@ -43,9 +43,6 @@ class FallDetector:
             return fall_class
         
         return 0
-    
-    def print_history(self):
-        print(self.prediction_history)
 
     def check_history_for_falls(self):
         if len(self.prediction_history) < FALL_PREDICTION_HISTORY_SIZE:

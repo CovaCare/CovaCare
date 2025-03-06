@@ -22,14 +22,14 @@ def manage_camera_threads():
 
         if INCLUDE_API_CAMS:
             for cam in new_camera_data:
-                url = cam["stream_url"]
+                url = format_stream_url(cam["stream_url"])
                 
                 fall_active = bool(cam["fall_detection_enabled"]) and is_within_time_range(
-                    cam.get("fall_detection_start_time"), cam.get("fall_detection_end_time")
+                    cam.get("fall_detection_start_time"), cam.get("fall_detection_end_time"), datetime.now().time()
                 )
                 
                 inactivity_active = bool(cam["inactivity_detection_enabled"]) and is_within_time_range(
-                    cam.get("inactivity_detection_start_time"), cam.get("inactivity_detection_end_time")
+                    cam.get("inactivity_detection_start_time"), cam.get("inactivity_detection_end_time"), datetime.now().time()
                 )
 
                 settings = (
@@ -73,9 +73,8 @@ def format_stream_url(camera):
         return f"rtsp://{user}:{pwd}@{stream_url}:554/stream1"
     return 0
 
-def is_within_time_range(start_time, end_time):
-    if start_time and end_time:
-        now = datetime.now().time()
+def is_within_time_range(start_time, end_time, now):
+    if start_time and end_time and now:
         return start_time <= now <= end_time
     return True 
 
