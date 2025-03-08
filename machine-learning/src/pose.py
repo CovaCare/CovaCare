@@ -1,6 +1,6 @@
 import mediapipe as mp
 import numpy as np
-from config import MP_POSE_MODEL
+from config import MP_POSE_MODEL, MP_LANDMARK_SIZE
 
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
@@ -18,6 +18,7 @@ key_points = {
 def process_pose(frame, draw_landmarks=False):
     results = pose_model.process(frame)
     fall_keypoints = []
+    inactivity_keypoints = []
 
     if results.pose_landmarks:
         inactivity_keypoints = np.array(
@@ -29,6 +30,10 @@ def process_pose(frame, draw_landmarks=False):
 
         if draw_landmarks:
             mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+    
+    else:
+        fall_keypoints = [0] * (len(key_points) * 3)
+        inactivity_keypoints = np.zeros((MP_LANDMARK_SIZE, 2))
 
     return fall_keypoints, inactivity_keypoints, frame
 
