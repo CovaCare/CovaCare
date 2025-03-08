@@ -76,8 +76,8 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
     if (fall_detection_enabled) {
       if (!fallDetectionStartTime || !fallDetectionEndTime) {
         Alert.alert(
-          "Validation Error",
-          "Please set both start and end time for Fall Detection or select 'All Day'"
+          "Fall Detection",
+          "Please set both start and end time or select 'All Day'"
         );
         valid = false;
       }
@@ -86,8 +86,8 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
     if (inactivity_detection_enabled) {
       if (!inactivityDetectionStartTime || !inactivityDetectionEndTime) {
         Alert.alert(
-          "Validation Error",
-          "Please set both start and end time for Inactivity Detection or select 'All Day'"
+          "Inactivity Detection",
+          "Please set both start and end time or select 'All Day'"
         );
         valid = false;
       }
