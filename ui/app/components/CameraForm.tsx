@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { View } from "react-native";
-import { Camera, NewCamera } from "../api/types/cameraTypes";
+import { View, Alert } from "react-native";import { Camera, NewCamera } from "../api/types/cameraTypes";
 import { BaseForm } from "./common/components/BaseForm";
 import { FormField } from "./common/components/FormField";
 import { Card } from "./common/components/Card";
@@ -72,6 +71,26 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
     if (stream_url.trim() === "") {
       setStreamUrlError(true);
       valid = false;
+    }
+
+    if (fall_detection_enabled) {
+      if (!fallDetectionStartTime || !fallDetectionEndTime) {
+        Alert.alert(
+          "Validation Error",
+          "Please set both start and end time for Fall Detection or select 'All Day'"
+        );
+        valid = false;
+      }
+    }
+  
+    if (inactivity_detection_enabled) {
+      if (!inactivityDetectionStartTime || !inactivityDetectionEndTime) {
+        Alert.alert(
+          "Validation Error",
+          "Please set both start and end time for Inactivity Detection or select 'All Day'"
+        );
+        valid = false;
+      }
     }
 
     if (!valid) return;
