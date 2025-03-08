@@ -9,6 +9,7 @@ interface TimeInputFieldProps {
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
   label: string;
+  testIDPrefix?: string;
 }
 
 export const TimeInputField = ({
@@ -16,7 +17,8 @@ export const TimeInputField = ({
   endTime,
   onStartTimeChange,
   onEndTimeChange,
-  label
+  label,
+  testIDPrefix
 }: TimeInputFieldProps) => {
   const handleAllDayToggle = (value: boolean) => {
     if (value) {
@@ -40,6 +42,7 @@ export const TimeInputField = ({
             value={startTime}
             onChange={onStartTimeChange}
             placeholder="Start time"
+            testID={testIDPrefix ? `${testIDPrefix}-start-time` : undefined}
           />
         </View>
         <View style={styles.timePickerContainer}>
@@ -48,6 +51,7 @@ export const TimeInputField = ({
             value={endTime}
             onChange={onEndTimeChange}
             placeholder="End time"
+            testID={testIDPrefix ? `${testIDPrefix}-end-time` : undefined}
           />
         </View>
         <View style={styles.timePickerContainer}>
@@ -56,6 +60,7 @@ export const TimeInputField = ({
             checked={isAllDay}
             onValueChange={handleAllDayToggle}
             style={styles.allDayCheckbox}
+            testID={testIDPrefix ? `${testIDPrefix}-all-day` : undefined}
           />
         </View>
       </View>
