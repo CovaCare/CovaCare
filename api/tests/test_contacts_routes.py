@@ -5,7 +5,6 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-from contacts_routes import contacts_bp
 from __init__ import create_app
 
 @pytest.fixture
@@ -97,3 +96,33 @@ def test_test_alert_contact(client, mock_query_db):
         data = json.loads(response.data)
         assert data["success"] == True
         assert "sid" in data
+
+def test_alert_all_contacts(client, mock_query_db):
+    mock_contacts = [
+        {"id": 1, "name": "John Doe", "phone_number": "1234567890", "status": 1},
+        {"id": 2, "name": "Jane Doe", "phone_number": "0987654321", "status": 1}
+    ]
+    mock_query_db.return_value = mock_contacts
+    
+    with patch('contacts_routes.AlertService') as mock_alert_service:
+        mock_instance = mock_alert_service.return_value
+        mock_instance.send_alert.return_value = "test-sid"
+        
+        response = client.post('/contacts/alert-all', json={"message": "Test alert!"})
+        
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert data["success"] is True
+        assert data["message"] == "Alerts sent to all active contacts."
+
+
+def test_alert_all_contacts_no_active(client, mock_query_db):
+    mock_query_db.return_value = []
+    
+    response = client.post('/contacts/alert-all', json={"message": "Test alert!"})
+    
+    assert response.status_code == 404
+    data = json.loads(response.data)
+    assert data["success"] is False
+    assert data["message"] == "No active contacts found."
+
