@@ -43,6 +43,7 @@ export const DetectionSection = ({
         label={`${title} Enabled`}
         value={enabled}
         onValueChange={onEnabledChange}
+        testID={`${title.toLowerCase().replace(' ', '-')}-toggle`}
       />
       
       {enabled && (
@@ -53,6 +54,7 @@ export const DetectionSection = ({
             endTime={endTime}
             onStartTimeChange={onStartTimeChange}
             onEndTimeChange={onEndTimeChange}
+            testIDPrefix={title.toLowerCase().replace(' ', '-')}
           />
           
           {showSensitivity && sensitivity !== undefined && onSensitivityChange && (

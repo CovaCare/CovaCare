@@ -1,8 +1,8 @@
 import React from "react";
-import { FlatList, TouchableOpacity, Text, RefreshControl } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
 import { Camera } from "../api/types/cameraTypes";
 import { CameraListItem } from "./CameraListItem";
-import { styles } from "../(tabs)/styles/CameraScreen.styles";
+import { AddButton } from "./common/components/AddButton";
 
 interface CameraListProps {
   cameras: Camera[];
@@ -33,9 +33,7 @@ export const CameraList = ({
         />
       )}
       ListFooterComponent={
-        <TouchableOpacity style={styles.addButton} onPress={onAddCamera}>
-          <Text style={styles.addButtonText}>Add New Camera</Text>
-        </TouchableOpacity>
+        <AddButton title="Add New Camera" onPress={onAddCamera} />
       }
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

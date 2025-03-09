@@ -4,7 +4,8 @@ from db import get_db_connection, query_db
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Update the path to point to the root directory
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from services.alerting.src.alert_service import AlertService
 
 contacts_bp = Blueprint('contacts', __name__)

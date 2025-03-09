@@ -8,9 +8,10 @@ interface TimePickerProps {
   value: string;
   onChange: (time: string) => void;
   placeholder?: string;
+  testID?: string;
 }
 
-export const TimePicker = ({ label, value, onChange, placeholder = "Select time" }: TimePickerProps) => {
+export const TimePicker = ({ label, value, onChange, placeholder = "Select time", testID }: TimePickerProps) => {
   const [show, setShow] = useState(false);
   
   const displayTime = value || placeholder;
@@ -39,11 +40,12 @@ export const TimePicker = ({ label, value, onChange, placeholder = "Select time"
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <TouchableOpacity onPress={showTimePicker} style={styles.timeButton}>
+      <TouchableOpacity onPress={showTimePicker} style={styles.timeButton} testID={testID}>
         <Text style={styles.timeText}>{displayTime}</Text>
       </TouchableOpacity>
       {show && (
         <DateTimePicker
+          testID="dateTimePicker"
           value={getTimeDate()}
           mode="time"
           is24Hour={true}

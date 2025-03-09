@@ -3,8 +3,8 @@ import os
 import sys
 from unittest.mock import patch
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-from alert_service import AlertService
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
+from src.alert_service import AlertService
 
 @pytest.fixture
 def mock_twilio_client():

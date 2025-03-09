@@ -1,8 +1,8 @@
 import React from "react";
-import { FlatList, TouchableOpacity, Text, RefreshControl } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
 import { Contact } from "../api/types/contactTypes";
 import { ContactListItem } from "./ContactListItem";
-import { styles } from "../(tabs)/styles/ContactScreen.styles";
+import { AddButton } from "./common/components/AddButton";
 
 interface ContactListProps {
   contacts: Contact[];
@@ -33,9 +33,7 @@ export const ContactList = ({
         />
       )}
       ListFooterComponent={
-        <TouchableOpacity style={styles.addButton} onPress={onAddContact}>
-          <Text style={styles.addButtonText}>Add New Contact</Text>
-        </TouchableOpacity>
+        <AddButton title="Add New Contact" onPress={onAddContact} />
       }
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
