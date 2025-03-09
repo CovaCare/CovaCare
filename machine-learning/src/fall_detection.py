@@ -1,6 +1,7 @@
 import numpy as np
 from collections import deque
 import tensorflow as tf
+import os
 from config import MODEL_HIDDEN_SIZE, MODEL_OUTPUT_SIZE, MODEL_L2_REGULARIZATION, MODEL_RECURRENT_DROPOUT, MODEL_DROPOUT, FALL_INPUT_SIZE, FALL_WINDOW_SIZE, FALL_PREDICTION_HISTORY_SIZE, FALL_1_AND_3_THRESHOLD, FALL_2_THRESHOLD
 
 @tf.keras.utils.register_keras_serializable()
@@ -28,7 +29,7 @@ class FallDetector:
         self.pose_data_window = deque(maxlen=FALL_WINDOW_SIZE)
         self.prediction_history = deque(maxlen=FALL_PREDICTION_HISTORY_SIZE)
         self.model = tf.keras.models.load_model(
-            'fall_detection.keras',
+            os.path.join(os.path.dirname(__file__), 'fall_detection.keras'),
             custom_objects={'FallDetectionLSTM': FallDetectionLSTM}
         )
 
