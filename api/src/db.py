@@ -1,12 +1,14 @@
 # Database Helpers
 import os
 import sqlite3
+from config import TESTING_MODE
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_FILENAME = os.path.join(BASE_DIR, 'db', 'covacare.db')
+TEST_DB_FILENAME = os.path.join(BASE_DIR, 'db', 'test.db')
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_FILENAME, timeout=10)
+    conn = sqlite3.connect(DB_FILENAME if not TESTING_MODE else TEST_DB_FILENAME, timeout=10)
     conn.row_factory = sqlite3.Row
     conn.execute('PRAGMA journal_mode=WAL;')
     return conn
