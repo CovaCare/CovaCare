@@ -1,6 +1,6 @@
 # Cameras Endpoints
 from flask import Blueprint, request, jsonify, abort
-from db import get_db_connection, query_db
+from db import query_db
 
 cameras_bp = Blueprint('cameras', __name__)
 

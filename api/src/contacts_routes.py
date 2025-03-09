@@ -1,10 +1,9 @@
 # Contacts Endpoints
 from flask import Blueprint, request, jsonify, abort
-from db import get_db_connection, query_db
+from db import query_db
 import sys
 import os
 
-# Update the path to point to the root directory
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from services.alerting.src.alert_service import AlertService
 
@@ -75,7 +74,7 @@ def delete_contact(contact_id):
     query_db("DELETE FROM contacts WHERE id = ?", (contact_id,), commit=True)
     return jsonify({"message": "Contact deleted"}), 200
 
-# Test alert a contact
+# Send a test alert to a contact
 @contacts_bp.route('/contacts/<int:contact_id>/test-alert', methods=['POST'])
 def test_alert_contact(contact_id):
     contact = query_db("SELECT * FROM contacts WHERE id = ?", (contact_id,), one=True)

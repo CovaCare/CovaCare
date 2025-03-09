@@ -7,6 +7,3 @@ system_bp = Blueprint('system', __name__)
 def system_status():
     return jsonify({"status": "online"})
 
-@system_bp.route('/system/restart', methods=['POST'])
-def system_restart():
-    return jsonify({"message": "System restart triggered (not actually implemented)."}), 200
