@@ -4,9 +4,10 @@ export const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     gap: 4,
+    flexDirection: "row",
   },
   checkboxContainer: {
-    padding: 4, // For better touch area
+    padding: 4,
   },
   checkbox: {
     width: 20,
@@ -28,7 +29,6 @@ export const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     color: "#333",
-    fontWeight: "bold",
-    marginBottom: 7,
-  }
-}); 
+    fontWeight: 500,
+  },
+});

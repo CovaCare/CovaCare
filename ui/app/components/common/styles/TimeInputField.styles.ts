@@ -3,31 +3,25 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   label: {
     fontSize: 14,
-    fontWeight: "bold",
-    marginBottom: 8,
+    fontWeight: 600,
   },
   timeRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
+    width: "70%",
   },
-  timePickerContainer: {
-    flex: 1,
+  settingsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 40,
+    paddingLeft: 4,
+    paddingRight: 4,
   },
-  timeInput: {
-    flex: 0.45,
-    borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 8,
-    padding: 8,
-  },
-  endTimeContainer: {
+  labelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    marginBottom: 12,
+    gap: 4,
   },
-  allDayCheckbox: {
-    flex: 1,
-  }
 });

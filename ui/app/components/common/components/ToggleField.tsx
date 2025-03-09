@@ -8,15 +8,16 @@ interface ToggleFieldProps {
   testID?: string;
 }
 
-export const ToggleField = ({ label, value, onValueChange, testID }: ToggleFieldProps) => {
+export const ToggleField = ({
+  label,
+  value,
+  onValueChange,
+  testID,
+}: ToggleFieldProps) => {
   return (
     <View style={styles.switchContainer}>
-      <Text>{label}</Text>
-      <Switch 
-        value={value} 
-        onValueChange={onValueChange}
-        testID={testID}
-      />
+      <Text style={styles.label}>{label}</Text>
+      <Switch value={value} onValueChange={onValueChange} testID={testID} />
     </View>
   );
 };

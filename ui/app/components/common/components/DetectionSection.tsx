@@ -5,6 +5,7 @@ import { TimeInputField } from "./TimeInputField";
 import { SliderField } from "./SliderField";
 import { FormField } from "./FormField";
 import { ToggleField } from "./ToggleField";
+import { styles } from "../styles/DetectionSection.styles";
 
 interface DetectionSectionProps {
   title: string;
@@ -39,13 +40,15 @@ export const DetectionSection = ({
 }: DetectionSectionProps) => {
   return (
     <Card title={title} description={description}>
-      <ToggleField
-        label={`${title} Enabled`}
-        value={enabled}
-        onValueChange={onEnabledChange}
-        testID={`${title.toLowerCase().replace(' ', '-')}-toggle`}
-      />
-      
+      <View style={styles.toggleContainer}>
+        <ToggleField
+          label={`${title} Enabled`}
+          value={enabled}
+          onValueChange={onEnabledChange}
+          testID={`${title.toLowerCase().replace(" ", "-")}-toggle`}
+        />
+      </View>
+
       {enabled && (
         <>
           <TimeInputField
@@ -54,29 +57,33 @@ export const DetectionSection = ({
             endTime={endTime}
             onStartTimeChange={onStartTimeChange}
             onEndTimeChange={onEndTimeChange}
-            testIDPrefix={title.toLowerCase().replace(' ', '-')}
+            testIDPrefix={title.toLowerCase().replace(" ", "-")}
           />
-          
-          {showSensitivity && sensitivity !== undefined && onSensitivityChange && (
-            <SliderField
-              label="Sensitivity"
-              value={sensitivity}
-              onValueChange={onSensitivityChange}
-              info="Adjust how sensitive the system is to detecting inactivity. Higher values will trigger alerts more quickly when there is less movement."
-            />
-          )}
-          
+
+          {showSensitivity &&
+            sensitivity !== undefined &&
+            onSensitivityChange && (
+              <SliderField
+                label="Sensitivity"
+                value={sensitivity}
+                onValueChange={onSensitivityChange}
+                info="Adjust how sensitive the system is to detecting inactivity. Higher values will trigger alerts more quickly when there is less movement."
+              />
+            )}
+
           {duration !== undefined && onDurationChange && (
-            <FormField
-              label="Duration (minutes)"
-              value={duration}
-              onChangeText={onDurationChange}
-              keyboardType="numeric"
-              placeholder="Enter duration"
-            />
+            <View style={styles.durationContainer}>
+              <FormField
+                label="Time of Inactivity Before Alert (minutes)"
+                value={duration}
+                onChangeText={onDurationChange}
+                keyboardType="numeric"
+                placeholder="Enter duration"
+              />
+            </View>
           )}
         </>
       )}
     </Card>
   );
-}; 
+};
