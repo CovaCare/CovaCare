@@ -1,57 +1,39 @@
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, Platform } from 'react-native';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { styles } from '../styles/TimePicker.styles';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { styles } from "../styles/TimePicker.styles";
 
 interface TimePickerProps {
-  label: string;
   value: string;
   onChange: (time: string) => void;
-  placeholder?: string;
-  testID?: string;
 }
 
-export const TimePicker = ({ label, value, onChange, placeholder = "Select time", testID }: TimePickerProps) => {
-  const [show, setShow] = useState(false);
-  
-  const displayTime = value || placeholder;
-  
+export const TimePicker = ({ value, onChange }: TimePickerProps) => {
   const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    setShow(Platform.OS === 'ios');
-    if (event.type === 'set' && selectedDate) {
-      const hours = selectedDate.getHours().toString().padStart(2, '0');
-      const minutes = selectedDate.getMinutes().toString().padStart(2, '0');
+    if (event.type === "set" && selectedDate) {
+      const hours = selectedDate.getHours().toString().padStart(2, "0");
+      const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
       onChange(`${hours}:${minutes}`);
     }
   };
 
-  const showTimePicker = () => {
-    setShow(true);
-  };
-
   const getTimeDate = () => {
+    value = "14:30";
     if (!value) return new Date();
-    const [hours, minutes] = value.split(':');
+    const [hours, minutes] = value.split(":");
     const date = new Date();
     date.setHours(parseInt(hours), parseInt(minutes));
     return date;
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <TouchableOpacity onPress={showTimePicker} style={styles.timeButton} testID={testID}>
-        <Text style={styles.timeText}>{displayTime}</Text>
-      </TouchableOpacity>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={getTimeDate()}
-          mode="time"
-          is24Hour={true}
-          onChange={handleChange}
-        />
-      )}
-    </View>
+    <DateTimePicker
+      testID="dateTimePicker"
+      value={getTimeDate()}
+      mode="time"
+      is24Hour={true}
+      onChange={handleChange}
+      style={styles.dateTimePicker}
+    />
   );
 };

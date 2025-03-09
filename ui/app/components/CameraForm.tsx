@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { View, Alert } from "react-native";import { Camera, NewCamera } from "../api/types/cameraTypes";
+import { Alert } from "react-native";
+import { Camera, NewCamera } from "../api/types/cameraTypes";
 import { BaseForm } from "./common/components/BaseForm";
 import { FormField } from "./common/components/FormField";
 import { Card } from "./common/components/Card";
@@ -82,7 +83,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
         valid = false;
       }
     }
-  
+
     if (inactivity_detection_enabled) {
       if (!inactivityDetectionStartTime || !inactivityDetectionEndTime) {
         Alert.alert(
@@ -124,8 +125,8 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
       onSave={handleSave}
       onCancel={onCancel}
     >
-      <Card 
-        title="Camera Details" 
+      <Card
+        title="Camera Details"
         description="Enter the basic information for your camera"
       >
         <FormField
@@ -179,7 +180,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
         endTime={inactivityDetectionEndTime}
         onStartTimeChange={setInactivityDetectionStartTime}
         onEndTimeChange={setInactivityDetectionEndTime}
-        showSensitivity={true}
+        showSensitivity={false}
         sensitivity={inactivitySensitivity}
         onSensitivityChange={setInactivitySensitivity}
         duration={inactivityDuration}
