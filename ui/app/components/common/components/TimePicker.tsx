@@ -18,7 +18,6 @@ export const TimePicker = ({ value, onChange }: TimePickerProps) => {
   };
 
   const getTimeDate = () => {
-    value = "14:30";
     if (!value) return new Date();
     const [hours, minutes] = value.split(":");
     const date = new Date();
