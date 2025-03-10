@@ -50,7 +50,7 @@ const mockContact = {
 describe('App Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     (apiClient.get as jest.Mock).mockImplementation((url) => {
       if (url === '/cameras') {
         return Promise.resolve({ data: [mockCamera] });
@@ -60,27 +60,59 @@ describe('App Integration Tests', () => {
       }
       return Promise.reject(new Error('Not found'));
     });
-    
+
     (apiClient.post as jest.Mock).mockImplementation((url, data) => {
       if (url === '/cameras') {
-        return Promise.resolve({ 
-          data: { 
-            ...data, 
+        return Promise.resolve({
+          data: {
+            ...data,
             id: 2,
             created_at: '2025-03-02',
             updated_at: '2025-03-02'
-          } 
+          }
         });
       }
       if (url === '/contacts') {
-        return Promise.resolve({ 
-          data: { 
-            ...data, 
+        return Promise.resolve({
+          data: {
+            ...data,
             id: 2,
             created_at: '2025-03-02',
             updated_at: '2025-03-02'
-          } 
+          }
         });
+      }
+      return Promise.reject(new Error('Not found'));
+    });
+
+    (apiClient.put as jest.Mock).mockImplementation((url, data) => {
+      if (url === '/cameras/1') {
+        return Promise.resolve({
+          data: {
+            ...data,
+            id: 1,
+            updated_at: '2025-03-03'
+          }
+        });
+      }
+      if (url === '/contacts/1') {
+        return Promise.resolve({
+          data: {
+            ...data,
+            id: 1,
+            updated_at: '2025-03-03'
+          }
+        });
+      }
+      return Promise.reject(new Error('Not found'));
+    });
+
+    (apiClient.delete as jest.Mock).mockImplementation((url) => {
+      if (url === '/cameras/1') {
+        return Promise.resolve({ data: {} });
+      }
+      if (url === '/contacts/1') {
+        return Promise.resolve({ data: {} });
       }
       return Promise.reject(new Error('Not found'));
     });
@@ -97,17 +129,36 @@ describe('App Integration Tests', () => {
     await findByText('172.16.1.110');
 
     fireEvent.press(getByText('Add New Camera'));
-    
-
     fireEvent.changeText(getByPlaceholderText('Camera Name'), 'New Camera');
     fireEvent.changeText(getByPlaceholderText('Camera Username'), 'admin');
     fireEvent.changeText(getByPlaceholderText('Camera Password'), 'pass123');
     fireEvent.changeText(getByPlaceholderText('192.168.0.100'), '192.168.1.200');
-
     fireEvent.press(getByText('Save'));
 
     await findByText('New Camera');
   });
+
+  it('handles updating camera details', async () => {
+    const { getByText, findByText, getByDisplayValue } = render(
+      <TestWrapper>
+        <CameraScreen />
+      </TestWrapper>
+    );
+
+    await findByText('Tapo1');
+
+    fireEvent.press(getByText('Tapo1'));
+
+    await waitFor(() => {
+      expect(getByDisplayValue('Tapo1')).toBeTruthy();
+    });
+
+    fireEvent.changeText(getByDisplayValue('Tapo1'), 'Updated Camera');
+    fireEvent.press(getByText('Save'));
+
+    await findByText('Updated Camera');
+  });
+
 
   it('renders contact screen and handles contact operations', async () => {
     const { getByText, findByText, getByPlaceholderText, getAllByText } = render(
@@ -120,37 +171,49 @@ describe('App Integration Tests', () => {
     await findByText('13061112222');
 
     fireEvent.press(getByText('Add New Contact'));
-
     fireEvent.changeText(getByPlaceholderText('Contact Name'), 'Jane Doe');
     fireEvent.changeText(getByPlaceholderText('Phone Number'), '13061234567');
-
     fireEvent.press(getByText('Save'));
 
     await findByText('Jane Doe');
     await findByText('13061234567');
-    
     await waitFor(() => {
       const activeElements = getAllByText('Active');
       expect(activeElements.length).toBe(2);
     });
   });
 
-  it('handles API errors gracefully', async () => {
-    const originalConsoleError = console.error;
-    console.error = jest.fn();
-    
-    (apiClient.get as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+  it('handles deleting a contact', async () => {
+    (apiClient.get as jest.Mock)
+      .mockImplementationOnce((url) => {
+        if (url === '/contacts') {
+          return Promise.resolve({ data: [mockContact] });
+        }
+        return Promise.reject(new Error('Not found'));
+      })
+      .mockImplementationOnce((url) => {
+        if (url === '/contacts') {
+          return Promise.resolve({ data: [] });
+        }
+        return Promise.reject(new Error('Not found'));
+      });
 
-    render(
+    const { getByText, queryByText, findByText } = render(
       <TestWrapper>
         <ContactScreen />
       </TestWrapper>
     );
 
+    await findByText('John Doe');
+
+    fireEvent.press(getByText('Delete'));
+
+    const lastAlertCall = (Alert.alert as jest.Mock).mock.calls.pop();
+    const confirmAction = lastAlertCall[2][1].onPress;
+    confirmAction();
+
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to fetch contacts.');
+      expect(queryByText('John Doe')).toBeNull();
     });
-    
-    console.error = originalConsoleError;
   });
 });
