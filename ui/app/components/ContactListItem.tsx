@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { Contact } from "../api/types/contactTypes";
 import { styles } from "./ContactListItem.styles";
 import { testAlertContact } from "../api/services/contactService";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface ContactListItemProps {
   contact: Contact;
@@ -32,25 +33,26 @@ export const ContactListItem = ({
           <Text style={styles.contactName}>{contact.name}</Text>
           <Text style={styles.contactPhone}>{contact.phone_number}</Text>
           <Text style={styles.contactStatus}>
-            Status:{' '}
-            <Text style={contact.status === 1 ? styles.active : styles.inactive}>
+            Status:{" "}
+            <Text
+              style={contact.status === 1 ? styles.active : styles.inactive}
+            >
               {contact.status === 1 ? "Active" : "Inactive"}
             </Text>
           </Text>
         </View>
       </TouchableOpacity>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.testButton}
-          onPress={handleTestAlert}
-        >
-          <Text style={styles.buttonText}>Test Alert</Text>
+        <TouchableOpacity onPress={() => onDelete(contact)}>
+          <FontAwesome
+            name="trash"
+            size={26}
+            color="gray"
+            testID="deleteIcon"
+          />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => onDelete(contact)}
-        >
-          <Text style={styles.buttonText}>Delete</Text>
+        <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
+          <Text style={styles.buttonText}>Test Alert</Text>
         </TouchableOpacity>
       </View>
     </View>

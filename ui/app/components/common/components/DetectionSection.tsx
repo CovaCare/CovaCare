@@ -43,6 +43,7 @@ export const DetectionSection = ({
       <View style={styles.toggleContainer}>
         <ToggleField
           label={`${title} Enabled`}
+          spaceBetween={true}
           value={enabled}
           onValueChange={onEnabledChange}
           testID={`${title.toLowerCase().replace(" ", "-")}-toggle`}

@@ -8,13 +8,26 @@ export default function TabLayout() {
     <Tabs
       initialRouteName="emergencyContacts"
       screenOptions={{
-        tabBarActiveTintColor: '#4762e8',
+        tabBarActiveTintColor: "#4762e8",
+        headerTitleStyle: {
+          fontSize: 22,
+          fontWeight: "bold",
+        },
+        headerStyle: {
+          height: 115,
+          backgroundColor: "#f8f9fa",
+        },
+        headerTitleAlign: "left",
+        headerTitleContainerStyle: {
+          justifyContent: "flex-end",
+          paddingBottom: 10,
+        },
       }}
     >
       <Tabs.Screen
         name="emergencyContacts"
         options={{
-          title: 'Emergency Contacts',
+          title: "Emergency Contacts",
           tabBarIcon: ({ color }) => (
             <AntDesign name="contacts" color={color} size={24} />
           ),
@@ -24,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="cameras"
         options={{
-          title: 'Cameras',
+          title: "Cameras",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="video-camera" color={color} size={24} />
           ),

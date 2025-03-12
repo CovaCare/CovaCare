@@ -36,20 +36,11 @@ export const styles = StyleSheet.create({
     color: "#333",
   },
   enabled: {
-    color: "#4CAF50",
+    color: "#007BFF",
     fontWeight: "500",
   },
   disabled: {
-    color: "#FF5252",
+    color: "#666",
     fontWeight: "500",
-  },
-  deleteButton: {
-    backgroundColor: "#ff5252",
-    padding: 8,
-    borderRadius: 4,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontSize: 14,
   },
 });

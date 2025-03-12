@@ -1,4 +1,11 @@
-import { View, TouchableOpacity, Text, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { styles } from "../styles/BaseForm.styles";
 
 interface BaseFormProps {
@@ -9,17 +16,17 @@ interface BaseFormProps {
   scrollable?: boolean;
 }
 
-export const BaseForm = ({ 
-  title, 
-  onSave, 
-  onCancel, 
+export const BaseForm = ({
+  title,
+  onSave,
+  onCancel,
   children,
-  scrollable = true 
+  scrollable = true,
 }: BaseFormProps) => {
   const ContentWrapper = scrollable ? ScrollView : View;
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.outerContainer}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
@@ -28,18 +35,20 @@ export const BaseForm = ({
         <Text style={styles.formTitle}>{title}</Text>
       </View>
 
-      <ContentWrapper 
-        contentContainerStyle={scrollable ? styles.scrollContainer : styles.container}
+      <ContentWrapper
+        contentContainerStyle={
+          scrollable ? styles.scrollContainer : styles.container
+        }
       >
         {children}
       </ContentWrapper>
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
+          <Text style={styles.cancelButtonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.saveButton} onPress={onSave}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

@@ -28,33 +28,25 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
   active: {
-    color: "#4CAF50",
+    color: "#007BFF",
     fontWeight: "500",
   },
   inactive: {
-    color: "#FF5252",
+    color: "#666",
     fontWeight: "500",
   },
-  deleteButton: {
-    backgroundColor: "#ff5252",
-    padding: 8,
-    borderRadius: 4,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontSize: 14,
-  },
   buttonContainer: {
-    flexDirection: 'row',
-    gap: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
   },
   testButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     padding: 8,
     borderRadius: 4,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
   },
 });
