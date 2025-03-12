@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "../api/types/cameraTypes";
 import { styles } from "./CameraListItem.styles";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Trash2 } from 'lucide-react-native';
 
 interface CameraListItemProps {
   camera: Camera;
@@ -48,8 +48,8 @@ export const CameraListItem = ({
           </Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => onDelete(camera)}>
-        <FontAwesome name="trash" size={26} color="gray" testID="deleteIcon" />
+      <TouchableOpacity onPress={() => onDelete(camera)} testID="deleteIcon">
+        <Trash2 size={25} color="red" />
       </TouchableOpacity>
     </TouchableOpacity>
   );
