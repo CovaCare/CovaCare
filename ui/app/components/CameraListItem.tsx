@@ -2,6 +2,7 @@ import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "../api/types/cameraTypes";
 import { styles } from "./CameraListItem.styles";
+import { Trash2 } from 'lucide-react-native';
 
 interface CameraListItemProps {
   camera: Camera;
@@ -24,24 +25,31 @@ export const CameraListItem = ({
         <Text style={styles.cameraDetails}>{camera.stream_url}</Text>
         <View style={styles.detectionStatus}>
           <Text style={styles.statusText}>
-            Fall Detection: 
-            <Text style={camera.fall_detection_enabled ? styles.enabled : styles.disabled}>
+            Fall Detection:
+            <Text
+              style={
+                camera.fall_detection_enabled ? styles.enabled : styles.disabled
+              }
+            >
               {camera.fall_detection_enabled ? " Enabled" : " Disabled"}
             </Text>
           </Text>
           <Text style={styles.statusText}>
-            Inactivity Detection: 
-            <Text style={camera.inactivity_detection_enabled ? styles.enabled : styles.disabled}>
+            Inactivity Detection:
+            <Text
+              style={
+                camera.inactivity_detection_enabled
+                  ? styles.enabled
+                  : styles.disabled
+              }
+            >
               {camera.inactivity_detection_enabled ? " Enabled" : " Disabled"}
             </Text>
           </Text>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => onDelete(camera)}
-      >
-        <Text style={styles.deleteButtonText}>Delete</Text>
+      <TouchableOpacity onPress={() => onDelete(camera)} testID="deleteIcon">
+        <Trash2 size={25} color="red" />
       </TouchableOpacity>
     </TouchableOpacity>
   );

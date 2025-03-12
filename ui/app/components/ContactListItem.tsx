@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { Contact } from "../api/types/contactTypes";
 import { styles } from "./ContactListItem.styles";
 import { testAlertContact } from "../api/services/contactService";
+import { Trash2, Bell, Phone } from 'lucide-react-native';
 
 interface ContactListItemProps {
   contact: Contact;
@@ -30,27 +31,29 @@ export const ContactListItem = ({
       <TouchableOpacity onPress={() => onSelect(contact)} style={{ flex: 1 }}>
         <View>
           <Text style={styles.contactName}>{contact.name}</Text>
-          <Text style={styles.contactPhone}>{contact.phone_number}</Text>
+          <View style={styles.phoneContainer}>
+            <Phone size={16} color="#666" />
+            <Text style={styles.contactPhone}>{contact.phone_number}</Text>
+          </View>
           <Text style={styles.contactStatus}>
-            Status:{' '}
-            <Text style={contact.status === 1 ? styles.active : styles.inactive}>
+            Status:{" "}
+            <Text
+              style={contact.status === 1 ? styles.active : styles.inactive}
+            >
               {contact.status === 1 ? "Active" : "Inactive"}
             </Text>
           </Text>
         </View>
       </TouchableOpacity>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.testButton}
-          onPress={handleTestAlert}
-        >
-          <Text style={styles.buttonText}>Test Alert</Text>
+        <TouchableOpacity onPress={() => onDelete(contact)} testID="deleteIcon">
+          <Trash2 size={25} color="red" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => onDelete(contact)}
-        >
-          <Text style={styles.buttonText}>Delete</Text>
+        <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
+          <View style={styles.buttonContent}>
+            <Bell size={16} color="#fff" />
+            <Text style={styles.buttonText}>Alert</Text>
+          </View>
         </TouchableOpacity>
       </View>
     </View>

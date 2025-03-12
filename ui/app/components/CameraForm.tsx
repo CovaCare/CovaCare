@@ -26,15 +26,15 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
   const [inactivity_detection_enabled, setInactivityDetectionEnabled] =
     useState(camera?.inactivity_detection_enabled === 1);
   const [fallDetectionStartTime, setFallDetectionStartTime] = useState(
-    camera?.fall_detection_start_time || ""
+    camera?.fall_detection_start_time || "00:00"
   );
   const [fallDetectionEndTime, setFallDetectionEndTime] = useState(
-    camera?.fall_detection_end_time || ""
+    camera?.fall_detection_end_time || "00:00"
   );
   const [inactivityDetectionStartTime, setInactivityDetectionStartTime] =
-    useState(camera?.inactivity_detection_start_time || "");
+    useState(camera?.inactivity_detection_start_time || "00:00");
   const [inactivityDetectionEndTime, setInactivityDetectionEndTime] = useState(
-    camera?.inactivity_detection_end_time || ""
+    camera?.inactivity_detection_end_time || "00:00"
   );
 
   const [inactivitySensitivity, setInactivitySensitivity] = useState(
@@ -75,20 +75,29 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
     }
 
     if (fall_detection_enabled) {
-      if (!fallDetectionStartTime || !fallDetectionEndTime) {
-        Alert.alert(
-          "Fall Detection",
-          "Please set both start and end time or select 'All Day'"
-        );
+      if (!validateTimeInputs(fallDetectionStartTime, fallDetectionEndTime)) {
+        Alert.alert("Warning", "Invalid fall detection hours.");
         valid = false;
       }
     }
 
     if (inactivity_detection_enabled) {
-      if (!inactivityDetectionStartTime || !inactivityDetectionEndTime) {
+      if (
+        !validateTimeInputs(
+          inactivityDetectionStartTime,
+          inactivityDetectionEndTime
+        )
+      ) {
+        Alert.alert("Warning", "Invalid inactivity detection hours.");
+        valid = false;
+      }
+      if (
+        parseInt(inactivityDuration, 10) > 60 ||
+        parseInt(inactivityDuration, 10) < 3
+      ) {
         Alert.alert(
-          "Inactivity Detection",
-          "Please set both start and end time or select 'All Day'"
+          "Warning",
+          "Time of inactivity before alert must be between 3 and 60 minutes."
         );
         valid = false;
       }
@@ -119,16 +128,17 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
     onSave(cameraData as any);
   };
 
+  const validateTimeInputs = (startTime: string, endTime: string) => {
+    return !(!startTime || !endTime || startTime == "" || endTime == "");
+  };
+
   return (
     <BaseForm
       title={camera ? "Edit Camera" : "Add New Camera"}
       onSave={handleSave}
       onCancel={onCancel}
     >
-      <Card
-        title="Camera Details"
-        description="Enter the basic information for your camera"
-      >
+      <Card title="Camera Information" description="">
         <FormField
           label="Name"
           value={name}
@@ -162,7 +172,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
 
       <DetectionSection
         title="Fall Detection"
-        description="Configure fall detection settings"
+        description=""
         enabled={fall_detection_enabled}
         onEnabledChange={setFallDetectionEnabled}
         startTime={fallDetectionStartTime}
@@ -173,7 +183,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
 
       <DetectionSection
         title="Inactivity Detection"
-        description="Configure inactivity monitoring settings"
+        description=""
         enabled={inactivity_detection_enabled}
         onEnabledChange={setInactivityDetectionEnabled}
         startTime={inactivityDetectionStartTime}

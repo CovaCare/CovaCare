@@ -68,10 +68,7 @@ export const ContactForm = ({
       onSave={handleSave}
       onCancel={onCancel}
     >
-      <Card 
-        title="Contact Information" 
-        description="Enter the contact's details for emergency notifications"
-      >
+      <Card title="Contact Information" description="">
         <FormField
           label="Name"
           value={name}
@@ -90,10 +87,15 @@ export const ContactForm = ({
           keyboardType="numeric"
         />
 
-        <ToggleField 
-          label="Active" 
-          value={active} 
-          onValueChange={setActive} 
+        <ToggleField
+          label="Active"
+          infoButtonTitle={"Status"}
+          infoButtonMessage={
+            "Only active contacts will be sent emergency alerts."
+          }
+          spaceBetween={false}
+          value={active}
+          onValueChange={setActive}
         />
       </Card>
     </BaseForm>

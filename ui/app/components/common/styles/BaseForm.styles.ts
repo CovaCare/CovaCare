@@ -7,37 +7,46 @@ export const styles = StyleSheet.create({
   headerContainer: {
     padding: 16,
     backgroundColor: "#FFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#DADADA",
   },
   scrollContainer: {
     paddingHorizontal: 16,
-    paddingTop: 16,
     paddingBottom: 120,
   },
   container: {
     padding: 16,
   },
   formTitle: {
-    marginTop: 35,
-    fontSize: 24,
+    marginTop: 48,
+    fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
   },
   buttonContainer: {
     position: "absolute",
-    bottom: 25,
-    left: 16,
-    right: 16,
+    backgroundColor: "white",
+    bottom: 0,
+    paddingBottom: 25,
+    paddingTop: 16,
+    paddingHorizontal: 16,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   cancelButton: {
-    backgroundColor: "#FF5252",
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: "#007BFF",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
     flex: 1,
     marginRight: 8,
     alignItems: "center",
+  },
+  cancelButtonText: {
+    color: "#007BFF",
+    fontWeight: "bold",
   },
   saveButton: {
     backgroundColor: "#007BFF",
@@ -47,7 +56,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
-  buttonText: {
+  saveButtonText: {
     color: "#FFF",
     fontWeight: "bold",
   },
