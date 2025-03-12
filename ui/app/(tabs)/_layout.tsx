@@ -21,6 +21,7 @@ export default function TabLayout() {
         headerTitleContainerStyle: {
           justifyContent: "flex-end",
           paddingBottom: 10,
+          paddingLeft: 16,
         },
       }}
     >
