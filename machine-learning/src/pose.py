@@ -1,6 +1,7 @@
 import mediapipe as mp
 import numpy as np
-from config import MP_POSE_MODEL, MP_LANDMARK_SIZE
+from config import MP_POSE_MODEL, MP_LANDMARK_SIZE, MP_CONFIDENCE_THRESHOLD
+
 
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
@@ -21,6 +22,11 @@ def process_pose(frame, draw_landmarks=False):
     inactivity_keypoints = []
 
     if results.pose_landmarks:
+        total_confidence = np.mean([lmk.visibility for lmk in results.pose_landmarks.landmark])
+
+        if total_confidence < MP_CONFIDENCE_THRESHOLD:
+            return [0] * (len(key_points) * 3), np.zeros((MP_LANDMARK_SIZE, 2)), frame
+
         inactivity_keypoints = np.array(
             [[lmk.x, lmk.y] for lmk in results.pose_landmarks.landmark]
         )
@@ -36,4 +42,3 @@ def process_pose(frame, draw_landmarks=False):
         inactivity_keypoints = np.zeros((MP_LANDMARK_SIZE, 2))
 
     return fall_keypoints, inactivity_keypoints, frame
-

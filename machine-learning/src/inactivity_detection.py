@@ -15,8 +15,6 @@ class InactivityMonitor:
             diff = np.linalg.norm(current_keypoints - self.previous_keypoints, axis=1)
             movement = np.mean(diff)
 
-            print(movement)
-
             if movement < self.sensitivity:
                 self.inactive_time += time.time() - self.last_frame_time
             else:

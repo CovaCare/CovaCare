@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "../api/types/cameraTypes";
 import { styles } from "./CameraListItem.styles";
-import { Trash2 } from 'lucide-react-native';
+import { Trash2 } from "lucide-react-native";
 
 interface CameraListItemProps {
   camera: Camera;
@@ -49,7 +49,7 @@ export const CameraListItem = ({
         </View>
       </View>
       <TouchableOpacity onPress={() => onDelete(camera)} testID="deleteIcon">
-        <Trash2 size={25} color="red" />
+        <Trash2 size={25} color="gray" />
       </TouchableOpacity>
     </TouchableOpacity>
   );
