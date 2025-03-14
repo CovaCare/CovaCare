@@ -1,14 +1,16 @@
 import threading
 import cv2
-import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import queue
 from urllib.parse import quote
 from pose import process_pose
 from fall_detection import FallDetector
 from inactivity_detection import InactivityMonitor
 from api_connection import get_api_cameras, alert_active_contacts
-from config import INCLUDE_API_CAMS, INCLUDE_WEBCAM, CAMERA_STREAM_REFRESH_PERIOD, DISPLAY_VIDEOS, DRAW_LANDMARKS, DISPLAY_RESULTS_ON_FRAME, SEND_ALERTS, FALL_ALERT_TIMEOUT_PER_CAMERA, INACTIVITY_ALERT_TIMEOUT_PER_CAMERA, DEFAULT_INACTIVITY_DETECTION_ENABLED, DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DURATION, DEFAULT_INACTIVITY_SENSITIVITY
+from config import ( INCLUDE_API_CAMS, INCLUDE_WEBCAM, CAMERA_STREAM_REFRESH_PERIOD, DISPLAY_VIDEOS, DRAW_LANDMARKS, 
+                     DISPLAY_RESULTS_ON_FRAME, SEND_ALERTS, FALL_ALERT_TIMEOUT_PER_CAMERA, INACTIVITY_ALERT_TIMEOUT_PER_CAMERA, 
+                     DEFAULT_INACTIVITY_DETECTION_ENABLED, DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DURATION, 
+                     DEFAULT_INACTIVITY_SENSITIVITY, CAP_GRAB_COUNT, ENFORCE_REALTIME )
 
 frame_queue = queue.Queue()
 stop_event = threading.Event()
@@ -22,7 +24,7 @@ def manage_camera_threads():
 
         if INCLUDE_API_CAMS:
             for cam in new_camera_data:
-                url = format_stream_url(cam["stream_url"])
+                url = format_stream_url(cam)
                 
                 fall_active = bool(cam["fall_detection_enabled"]) and is_within_time_range(
                     cam.get("fall_detection_start_time"), cam.get("fall_detection_end_time"), datetime.now().time()
@@ -74,9 +76,23 @@ def format_stream_url(camera):
     return 0
 
 def is_within_time_range(start_time, end_time, now):
-    if start_time and end_time and now:
-        return start_time <= now <= end_time
-    return True 
+    if start_time == "00:00" and end_time == "00:00":  # All-day configuration
+        return True
+
+    today = datetime.today().date()
+
+    start_dt = datetime.strptime(start_time, "%H:%M").replace(year=today.year, month=today.month, day=today.day)
+    end_dt = datetime.strptime(end_time, "%H:%M").replace(year=today.year, month=today.month, day=today.day)
+
+    if end_dt < start_dt:
+        end_dt += timedelta(days=1)
+
+    now_dt = datetime.combine(today, now)
+    if now_dt < start_dt:
+        now_dt += timedelta(days=1)
+
+    return start_dt <= now_dt <= end_dt
+
 
 def process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration):
     cap = cv2.VideoCapture(stream_url)
@@ -85,16 +101,21 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
         return
 
     fall_detector = FallDetector()
-    inactivity_monitor = InactivityMonitor(inactivity_sensitivity, inactivity_duration)
+    inactivity_monitor = InactivityMonitor(inactivity_sensitivity, inactivity_duration * 60)
 
-    last_fall_alert_time = 0
-    last_inactivity_alert_time = 0
+    last_fall_alert_time = datetime.now() - timedelta(seconds=FALL_ALERT_TIMEOUT_PER_CAMERA + 1)
+    last_inactivity_alert_time = datetime.now() - timedelta(seconds=INACTIVITY_ALERT_TIMEOUT_PER_CAMERA + 1)
 
     while not stop_event.is_set():
-        ret, frame = cap.read()
+        if ENFORCE_REALTIME and CAP_GRAB_COUNT > 0:
+            for _ in range(CAP_GRAB_COUNT):
+                cap.grab()
+            ret, frame = cap.retrieve()
+        else:
+            ret, frame = cap.read()
 
         if not ret:
-            break
+            continue
 
         fall_keypoints, inactivity_keypoints, frame = process_pose(frame, DRAW_LANDMARKS)
 
@@ -112,30 +133,49 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
             cv2.putText(
                 frame, f"Current Window Class: {current_window_class}", (0, 50),
                 cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 0, 255), 2, cv2.LINE_AA 
+                (0, 255, 0), 2, cv2.LINE_AA 
             )
             cv2.putText(
                 frame, f"Fall Detected: {fall_detected}", (0, 100),
                 cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 0, 255), 2, cv2.LINE_AA 
+                (0, 255, 0), 2, cv2.LINE_AA 
             )
             cv2.putText(
                 frame, f"Inactivity Detected: {inactive}", (0, 150),
                 cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 0, 255), 2, cv2.LINE_AA
+                (0, 255, 0), 2, cv2.LINE_AA
             )
+            # cv2.putText(
+            #     frame, f"Inactivity Active: {inactivity_detection_active}", (0, 200),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA
+            # )
+            # cv2.putText(
+            #     frame, f"Fall Active: {fall_detection_active}", (0, 250),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA
+            # )
+            # cv2.putText(
+            #     frame, f"Duration: {inactivity_duration}", (0, 300),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA
+            # )
             
             if SEND_ALERTS:
                 if fall_detected:
-                    if time.time() - last_fall_alert_time > FALL_ALERT_TIMEOUT_PER_CAMERA:
-                        success = alert_active_contacts("Fall detected")
+                    current_time = datetime.now()
+                    time_since_last_fall_alert = (current_time - last_fall_alert_time).total_seconds()
+                    if time_since_last_fall_alert > FALL_ALERT_TIMEOUT_PER_CAMERA:
+                        success = alert_active_contacts("Fall detected" + ", ".join(map(str, fall_detector.get_history())))
                         if success:
-                            last_fall_alert_time = time.time()
+                            last_fall_alert_time = current_time
                 if inactive:
-                    if time.time() - last_inactivity_alert_time > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
+                    current_time = datetime.now()
+                    time_since_last_inactivity_alert = (current_time - last_inactivity_alert_time).total_seconds()
+                    if time_since_last_inactivity_alert > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
                         success = alert_active_contacts("Inactivity detected")
                         if success:
-                            last_inactivity_alert_time = time.time()
+                            last_inactivity_alert_time = current_time
 
         if DISPLAY_VIDEOS:
             frame_queue.put((stream_url, frame))

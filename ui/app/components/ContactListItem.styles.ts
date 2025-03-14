@@ -50,13 +50,14 @@ export const styles = StyleSheet.create({
     fontSize: 14,
   },
   buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
   },
   phoneContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+    marginVertical: 6,
   },
 });

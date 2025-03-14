@@ -162,7 +162,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           secureTextEntry
         />
         <FormField
-          label="Stream URL"
+          label="IP Address"
           value={stream_url}
           onChangeText={setStreamUrl}
           error={streamUrlError}

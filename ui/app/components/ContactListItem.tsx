@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { Contact } from "../api/types/contactTypes";
 import { styles } from "./ContactListItem.styles";
 import { testAlertContact } from "../api/services/contactService";
-import { Trash2, Bell, Phone } from 'lucide-react-native';
+import { Trash2, Bell, Phone } from "lucide-react-native";
 
 interface ContactListItemProps {
   contact: Contact;
@@ -47,7 +47,7 @@ export const ContactListItem = ({
       </TouchableOpacity>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => onDelete(contact)} testID="deleteIcon">
-          <Trash2 size={25} color="red" />
+          <Trash2 size={25} color="gray" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
           <View style={styles.buttonContent}>

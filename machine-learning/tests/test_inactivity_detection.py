@@ -22,8 +22,8 @@ def test_inactivity_detection_movement(inactivity_monitor):
     assert inactivity_monitor.check_inactivity(np.ones((33, 2))) is False 
 
 def test_inactivity_detection_after_duration(inactivity_monitor):
-    inactivity_monitor.check_inactivity(np.zeros((33, 2)))
+    inactivity_monitor.check_inactivity(np.ones((33, 2)))
     time.sleep(DEFAULT_INACTIVITY_DURATION)
-    assert inactivity_monitor.check_inactivity(np.zeros((33, 2))) is True
-    assert inactivity_monitor.check_inactivity(np.ones((33, 2))) is False
+    assert inactivity_monitor.check_inactivity(np.ones((33, 2))) is True
+    assert inactivity_monitor.check_inactivity(np.full((33, 2), 2)) is False
 
