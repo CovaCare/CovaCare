@@ -15,6 +15,19 @@ from config import ( INCLUDE_API_CAMS, INCLUDE_WEBCAM, CAMERA_STREAM_REFRESH_PER
 frame_queue = queue.Queue()
 stop_event = threading.Event()
 
+def format_alert_message(event_type, camera_name=None, timestamp=None):
+    """Format alert message with relevant details"""
+    timestamp = timestamp or datetime.now()
+    time_str = timestamp.strftime('%I:%M %p')
+    date_str = timestamp.strftime('%B %d, %Y')
+    location = f"Camera: {camera_name}" if camera_name else "Unknown Camera"
+    
+    if event_type == "fall":
+        return f"FALL DETECTED \n\nTime: {time_str}\nDate: {date_str}\nLocation: {location}\n\nImmediate assistance may be required. Please check on the person as soon as possible."
+    elif event_type == "inactivity":
+        return f"INACTIVITY ALERT \n\nTime: {time_str}\nDate: {date_str}\nLocation: {location}\n\nNo movement has been detected for an extended period. Please check on the person."
+    return ""
+
 def manage_camera_threads():
     active_threads = {}
 
@@ -38,7 +51,8 @@ def manage_camera_threads():
                     fall_active,
                     inactivity_active,
                     cam.get("inactivity_detection_sensitivity", DEFAULT_INACTIVITY_SENSITIVITY),
-                    cam.get("inactivity_detection_duration", DEFAULT_INACTIVITY_DURATION)
+                    cam.get("inactivity_detection_duration", DEFAULT_INACTIVITY_DURATION),
+                    cam.get("name", "Unknown Camera")
                 )
 
                 current_cameras[url] = settings
@@ -94,7 +108,7 @@ def is_within_time_range(start_time, end_time, now):
     return start_dt <= now_dt <= end_dt
 
 
-def process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration):
+def process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration, camera_name):
     cap = cv2.VideoCapture(stream_url)
     if not cap.isOpened():
         print(f"Failed to connect to {stream_url}")
@@ -162,18 +176,21 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
             # )
             
             if SEND_ALERTS:
+                current_time = datetime.now()
+                
                 if fall_detected:
-                    current_time = datetime.now()
                     time_since_last_fall_alert = (current_time - last_fall_alert_time).total_seconds()
                     if time_since_last_fall_alert > FALL_ALERT_TIMEOUT_PER_CAMERA:
-                        success = alert_active_contacts("Fall detected" + ", ".join(map(str, fall_detector.get_history())))
+                        message = format_alert_message("fall", camera_name, current_time)
+                        success = alert_active_contacts(message)
                         if success:
                             last_fall_alert_time = current_time
+                            
                 if inactive:
-                    current_time = datetime.now()
                     time_since_last_inactivity_alert = (current_time - last_inactivity_alert_time).total_seconds()
                     if time_since_last_inactivity_alert > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
-                        success = alert_active_contacts("Inactivity detected")
+                        message = format_alert_message("inactivity", camera_name, current_time)
+                        success = alert_active_contacts(message)
                         if success:
                             last_inactivity_alert_time = current_time
 
