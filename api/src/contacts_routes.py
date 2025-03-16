@@ -102,6 +102,8 @@ def alert_all_contacts():
     data = request.get_json()
     
     message = data.get("message")
+    media_url = data.get("media_url")
+    
     if not message:
         return jsonify({
             "success": False,
@@ -121,7 +123,7 @@ def alert_all_contacts():
     
     for contact in contacts:
         try:
-            result = alert_service.send_alert(contact['phone_number'], message)
+            result = alert_service.send_alert(contact['phone_number'], message, media_url)
             print(f"Alert sent to {contact['name']} at {contact['phone_number']}. SID: {result}")
         except Exception as e:
             failed_contacts.append({
