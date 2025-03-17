@@ -84,22 +84,16 @@ def test_alert_contact(contact_id):
     alert_service = AlertService()
     try:
         message = "This is a test alert from CovaCare!"
-        base_url = "https://3825-162-253-8-202.ngrok-free.app"
-        image_url = f"{base_url}/static/images/test-image.jpeg"
-        print(f"Sending test alert with image: {image_url}")
-        
-        result = alert_service.send_alert(contact['phone_number'], message, image_url)
+        result = alert_service.send_alert(contact['phone_number'], message)
         return jsonify({
             "success": True,
-            "message": f"Test alert sent to {contact['name']} at {contact['phone_number']} with image.",
+            "message": f"Test alert sent to {contact['name']} at {contact['phone_number']}.",
             "sid": result
         })
     except Exception as e:
-        error_message = f"Failed to send test alert: {str(e)}"
-        print(f"Error in test_alert_contact: {error_message}")
         return jsonify({
             "success": False,
-            "message": error_message
+            "message": f"Failed to send test alert: {str(e)}"
         }), 500
     
 # Alert all active contacts
@@ -108,8 +102,6 @@ def alert_all_contacts():
     data = request.get_json()
     
     message = data.get("message")
-    media_url = data.get("media_url")
-    
     if not message:
         return jsonify({
             "success": False,
@@ -129,7 +121,7 @@ def alert_all_contacts():
     
     for contact in contacts:
         try:
-            result = alert_service.send_alert(contact['phone_number'], message, media_url)
+            result = alert_service.send_alert(contact['phone_number'], message)
             print(f"Alert sent to {contact['name']} at {contact['phone_number']}. SID: {result}")
         except Exception as e:
             failed_contacts.append({
