@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, send_file
 import os
 
 app = Flask(__name__)
@@ -8,10 +8,10 @@ IMAGE_FOLDER = os.path.join(STATIC_FOLDER, 'images')
 
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
-@app.route('/images/<path:filename>')
+@app.route('/static/images/<path:filename>')
 def serve_image(filename):
     """Serve images from the static/images directory"""
-    return send_from_directory(IMAGE_FOLDER, filename)
+    return send_from_directory(IMAGE_FOLDER, filename, mimetype='image/jpeg')
 
 @app.route('/health')
 def health_check():
