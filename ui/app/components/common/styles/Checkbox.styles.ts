@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import colors from "../../../../constants/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -13,22 +14,22 @@ export const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: "#007BFF",
+    borderColor: colors.primary,
     borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
   },
   checked: {
-    backgroundColor: "#007BFF",
+    backgroundColor: colors.primary,
   },
   checkmark: {
-    color: "white",
+    color: colors.text.light,
     fontSize: 14,
     fontWeight: "bold",
   },
   label: {
     fontSize: 14,
-    color: "#333",
-    fontWeight: 500,
+    color: colors.text.primary,
+    fontWeight: "500",
   },
 });

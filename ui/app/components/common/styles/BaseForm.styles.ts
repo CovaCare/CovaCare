@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import colors from "../../../../constants/colors";
 
 export const styles = StyleSheet.create({
   outerContainer: {
@@ -6,7 +7,7 @@ export const styles = StyleSheet.create({
   },
   headerContainer: {
     padding: 16,
-    backgroundColor: "#FFF",
+    backgroundColor: colors.background.secondary,
     borderBottomWidth: 1,
     borderBottomColor: "#DADADA",
   },
@@ -22,10 +23,11 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
+    color: colors.text.primary,
   },
   buttonContainer: {
     position: "absolute",
-    backgroundColor: "white",
+    backgroundColor: colors.background.secondary,
     bottom: 0,
     paddingBottom: 25,
     paddingTop: 16,
@@ -34,9 +36,9 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   cancelButton: {
-    backgroundColor: "white",
+    backgroundColor: colors.background.secondary,
     borderWidth: 2,
-    borderColor: "#007BFF",
+    borderColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -45,11 +47,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButtonText: {
-    color: "#007BFF",
+    color: colors.primary,
     fontWeight: "bold",
   },
   saveButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -57,7 +59,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   saveButtonText: {
-    color: "#FFF",
+    color: colors.text.light,
     fontWeight: "bold",
   },
 });

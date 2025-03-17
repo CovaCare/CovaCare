@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import colors from "../../constants/colors";
 
 export const styles = StyleSheet.create({
   cameraItem: {
@@ -8,9 +9,9 @@ export const styles = StyleSheet.create({
     padding: 16,
     marginVertical: 8,
     marginHorizontal: 16,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: colors.background.secondary,
     borderRadius: 8,
-    shadowColor: "#000",
+    shadowColor: colors.shadow.default,
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
@@ -22,10 +23,11 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
+    color: colors.text.primary,
   },
   cameraDetails: {
     fontSize: 14,
-    color: "#666",
+    color: colors.text.secondary,
     marginBottom: 8,
   },
   detectionStatus: {
@@ -33,14 +35,14 @@ export const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 14,
-    color: "#333",
+    color: colors.text.primary,
   },
   enabled: {
-    color: "#007BFF",
+    color: colors.primary,
     fontWeight: "500",
   },
   disabled: {
-    color: "#666",
+    color: colors.text.secondary,
     fontWeight: "500",
   },
 });

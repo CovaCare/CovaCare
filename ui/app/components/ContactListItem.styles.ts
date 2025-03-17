@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import colors from "../../constants/colors";
 
 export const styles = StyleSheet.create({
   contactItem: {
@@ -8,31 +9,32 @@ export const styles = StyleSheet.create({
     padding: 16,
     marginVertical: 8,
     marginHorizontal: 16,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: colors.background.secondary,
     borderRadius: 8,
-    shadowColor: "#000",
+    shadowColor: colors.shadow.default,
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
   contactName: {
     fontSize: 18,
     fontWeight: "bold",
+    color: colors.text.primary,
   },
   contactPhone: {
     fontSize: 16,
-    color: "#666",
+    color: colors.text.secondary,
   },
   contactStatus: {
     fontSize: 14,
-    color: "#333",
+    color: colors.text.primary,
     marginTop: 4,
   },
   active: {
-    color: "#007BFF",
+    color: colors.primary,
     fontWeight: "500",
   },
   inactive: {
-    color: "#666",
+    color: colors.text.secondary,
     fontWeight: "500",
   },
   buttonContainer: {
@@ -41,12 +43,12 @@ export const styles = StyleSheet.create({
     gap: 16,
   },
   testButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: colors.primary,
     padding: 8,
     borderRadius: 4,
   },
   buttonText: {
-    color: "#fff",
+    color: colors.text.light,
     fontSize: 14,
   },
   buttonContent: {
