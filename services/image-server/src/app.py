@@ -10,12 +10,12 @@ os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
 @app.route('/static/images/<path:filename>')
 def serve_image(filename):
-    """Serve images from the static/images directory"""
+    if not os.path.exists(os.path.join(IMAGE_FOLDER, filename)):
+        return {'error': 'Image not found'}, 404
     return send_from_directory(IMAGE_FOLDER, filename, mimetype='image/jpeg')
 
 @app.route('/health')
 def health_check():
-    """Health check endpoint"""
     return {'status': 'healthy'}, 200
 
 if __name__ == '__main__':
