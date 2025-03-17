@@ -11,14 +11,21 @@ class AlertService:
         self.from_number = os.getenv('TWILIO_FROM_NUMBER')
         self.client = Client(account_sid, auth_token)
 
-    def send_alert(self, to_number, message):
-        message = self.client.messages.create(
-            body=message,
-            from_=self.from_number,
-            to=to_number
-        )
+    def send_alert(self, to_number, message, media_url=None):
+        message_params = {
+            'body': message,
+            'from_': self.from_number,
+            'to': to_number
+        }
+        
+        if media_url:
+            message_params['media_url'] = [media_url]
+            
+        message = self.client.messages.create(**message_params)
         print(f"Message sent from: {self.from_number} to: {to_number}")
         print(f"Message content: {message.body}")
+        if media_url:
+            print(f"Media URL: {media_url}")
         return message.sid
 
 if __name__ == "__main__":

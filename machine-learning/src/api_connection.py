@@ -34,11 +34,15 @@ def get_api_cameras():
     with lock:
         return cameras.copy()
 
-def alert_active_contacts(message):
+def alert_active_contacts(message, media_url=None):
     try:
+        data = {"message": message}
+        if media_url:
+            data["media_url"] = media_url
+            
         response = requests.post(
             API_BASE_URL + API_ALERT_ROUTE, 
-            json={"message": message},
+            json=data,
             timeout=API_TIMEOUT
         )
         
