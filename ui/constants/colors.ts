@@ -28,7 +28,6 @@ export const colors = {
   },
 } as const;
 
-// Type for strongly typed color access
 export type ColorKeys = typeof colors;
 
 export default colors; 

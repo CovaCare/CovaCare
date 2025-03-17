@@ -20,4 +20,22 @@ export const styles = StyleSheet.create({
   inputError: {
     borderColor: colors.status.error,
   },
+  keyboardAccessory: {
+    backgroundColor: colors.background.secondary,
+    borderTopWidth: 1,
+    borderTopColor: "#DDD",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+  },
+  keyboardButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  saveButtonText: {
+    color: colors.primary,
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });

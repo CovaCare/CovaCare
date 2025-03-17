@@ -1,4 +1,4 @@
-import { Text, TextInput, View } from "react-native";
+import { Text, TextInput, View, TouchableOpacity, Keyboard, InputAccessoryView, Platform } from "react-native";
 import { styles } from "../styles/FormField.styles";
 
 interface FormFieldProps {
@@ -24,6 +24,8 @@ export const FormField = ({
   keyboardType = "default",
   style
 }: FormFieldProps) => {
+  const inputAccessoryViewID = 'numericKeyboard';
+
   return (
     <View>
       <Text style={styles.fieldTitle}>{label}</Text>
@@ -36,7 +38,22 @@ export const FormField = ({
         secureTextEntry={secureTextEntry}
         maxLength={maxLength}
         keyboardType={keyboardType}
+        inputAccessoryViewID={keyboardType === "numeric" ? inputAccessoryViewID : undefined}
       />
+      {Platform.OS === 'ios' && keyboardType === "numeric" && (
+        <InputAccessoryView nativeID={inputAccessoryViewID}>
+          <View style={styles.keyboardAccessory}>
+            <TouchableOpacity 
+              style={styles.keyboardButton} 
+              onPress={() => {
+                Keyboard.dismiss(); 
+              }}
+            >
+              <Text style={styles.saveButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </InputAccessoryView>
+      )}
     </View>
   );
 };
