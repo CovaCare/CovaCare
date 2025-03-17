@@ -2,7 +2,8 @@ import threading
 import cv2
 from datetime import datetime, timedelta
 import queue
-from urllib.parse import quote
+from urllib.parse import quote, urljoin
+import os
 from pose import process_pose
 from fall_detection import FallDetector
 from inactivity_detection import InactivityMonitor
@@ -12,11 +13,16 @@ from config import ( INCLUDE_API_CAMS, INCLUDE_WEBCAM, CAMERA_STREAM_REFRESH_PER
                      DEFAULT_INACTIVITY_DETECTION_ENABLED, DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DURATION, 
                      DEFAULT_INACTIVITY_SENSITIVITY, CAP_GRAB_COUNT, ENFORCE_REALTIME )
 
+import sys
+image_server_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
+                                'services', 'image-server', 'src')
+sys.path.append(image_server_path)
+from server_config import BASE_URL
+
 frame_queue = queue.Queue()
 stop_event = threading.Event()
 
 def format_alert_message(event_type, camera_name=None, timestamp=None):
-    """Format alert message with relevant details"""
     timestamp = timestamp or datetime.now()
     time_str = timestamp.strftime('%I:%M %p')
     date_str = timestamp.strftime('%B %d, %Y')
@@ -27,6 +33,23 @@ def format_alert_message(event_type, camera_name=None, timestamp=None):
     elif event_type == "inactivity":
         return f"INACTIVITY ALERT \n\nTime: {time_str}\nDate: {date_str}\nLocation: {location}\n\nNo movement has been detected for an extended period. Please check on the person."
     return ""
+
+def save_incident_frame(frame, incident_type, camera_name=None):
+    image_server_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
+                                   'services', 'image-server', 'src', 'static', 'images')
+    os.makedirs(image_server_dir, exist_ok=True)
+    
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    camera_id = camera_name.replace(" ", "_").lower() if camera_name else "unknown_camera"
+    filename = f'{incident_type}_incident_{camera_id}_{timestamp}.jpeg'
+    filepath = os.path.join(image_server_dir, filename)
+    
+    cv2.imwrite(filepath, frame, [cv2.IMWRITE_JPEG_QUALITY, 95])
+    
+    relative_path = f'/static/images/{filename}'
+    full_url = urljoin(BASE_URL, relative_path)
+    
+    return full_url
 
 def manage_camera_threads():
     active_threads = {}
@@ -159,21 +182,6 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                 cv2.FONT_HERSHEY_SIMPLEX, 1,
                 (0, 255, 0), 2, cv2.LINE_AA
             )
-            # cv2.putText(
-            #     frame, f"Inactivity Active: {inactivity_detection_active}", (0, 200),
-            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
-            #     (0, 255, 0), 2, cv2.LINE_AA
-            # )
-            # cv2.putText(
-            #     frame, f"Fall Active: {fall_detection_active}", (0, 250),
-            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
-            #     (0, 255, 0), 2, cv2.LINE_AA
-            # )
-            # cv2.putText(
-            #     frame, f"Duration: {inactivity_duration}", (0, 300),
-            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
-            #     (0, 255, 0), 2, cv2.LINE_AA
-            # )
             
             if SEND_ALERTS:
                 current_time = datetime.now()
@@ -181,7 +189,9 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                 if fall_detected:
                     time_since_last_fall_alert = (current_time - last_fall_alert_time).total_seconds()
                     if time_since_last_fall_alert > FALL_ALERT_TIMEOUT_PER_CAMERA:
+                        image_url = save_incident_frame(frame, "fall", camera_name)
                         message = format_alert_message("fall", camera_name, current_time)
+                        message += f"\n\n{image_url}"
                         success = alert_active_contacts(message)
                         if success:
                             last_fall_alert_time = current_time
@@ -189,7 +199,9 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                 if inactive:
                     time_since_last_inactivity_alert = (current_time - last_inactivity_alert_time).total_seconds()
                     if time_since_last_inactivity_alert > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
+                        image_url = save_incident_frame(frame, "inactivity", camera_name)
                         message = format_alert_message("inactivity", camera_name, current_time)
+                        message += f"\n\n{image_url}"
                         success = alert_active_contacts(message)
                         if success:
                             last_inactivity_alert_time = current_time
@@ -217,3 +229,54 @@ def display_frames():
 
 def stop_processing():
     stop_event.set()
+
+def test_incident_flow():
+    """Test function to simulate incident detection with sample images"""
+    print("Testing incident detection flow with sample images...")
+    
+    # Load sample image
+    sample_image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sample_image.jpeg')
+    if not os.path.exists(sample_image_path):
+        print(f"Please place a sample image named 'sample_image.jpeg' in {os.path.dirname(os.path.abspath(__file__))}")
+        return
+    
+    frame = cv2.imread(sample_image_path)
+    if frame is None:
+        print("Failed to load sample image")
+        return
+    
+    # Simulate both fall and inactivity incidents
+    test_cases = [
+        ("fall", "Living Room Camera"),
+        ("inactivity", "Bedroom Camera")
+    ]
+    
+    for incident_type, camera_name in test_cases:
+        print(f"\nTesting {incident_type} incident from {camera_name}...")
+        
+        # Save frame and get URL
+        image_url = save_incident_frame(frame, incident_type, camera_name)
+        
+        # Generate alert message
+        message = format_alert_message(incident_type, camera_name)
+        message += f"\n\n{image_url}"
+        
+        print(f"\nSending alert for {incident_type} incident...")
+        success = alert_active_contacts(message)
+        
+        if success:
+            print(f"✓ Alert sent successfully!")
+            print("\nMessage sent:")
+            print("-" * 50)
+            print(message)
+            print("-" * 50)
+        else:
+            print("✗ Failed to send alert")
+        
+        print(f"\nImage saved at: {image_url}")
+        print("Make sure the Flask server is running and ngrok is configured in config.py")
+
+if __name__ == '__main__':
+    # Comment out the normal camera processing for testing
+    # manage_camera_threads()
+    test_incident_flow()
