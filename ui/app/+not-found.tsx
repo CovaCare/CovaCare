@@ -1,14 +1,23 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { styles } from "./not-found.styles";
+import { Link } from "expo-router";
 
 const NotFoundPage = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>404 - Page Not Found</Text>
-      <Text style={styles.message}>
-        Oops! The page you're looking for doesn't exist.
-      </Text>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>This page doesn't exist</Text>
+        <Text style={styles.message}>
+          Oops! It seems you've wandered into uncharted territory.{"\n"}
+          The page you're looking for doesn't exist.
+        </Text>
+        <Link href="/" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Return Home</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
     </View>
   );
 };

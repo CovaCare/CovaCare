@@ -1,19 +1,50 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+import colors from "../constants/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colors.background.primary,
+    padding: 20,
+  },
+  contentContainer: {
+    alignItems: "center",
+    maxWidth: 600,
+    width: "100%",
   },
   title: {
-    fontSize: 32,
+    fontSize: 72,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: colors.text.primary,
+    marginBottom: 16,
+    textAlign: "center",
   },
   message: {
+    fontSize: 24,
+    color: colors.text.secondary,
+    marginBottom: 32,
+    textAlign: "center",
+    lineHeight: 32,
+  },
+  button: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    shadowColor: colors.shadow.default,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonText: {
+    color: colors.text.light,
     fontSize: 18,
-    color: "#888",
+    fontWeight: "600",
   },
 });
