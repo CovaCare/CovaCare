@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   fieldTitle: {
     fontSize: 15,
     fontWeight: "600",
-    marginBottom: 7,
+    marginBottom: 5,
     color: colors.text.primary,
   },
   input: {
@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     borderColor: "#DDD",
     borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: 7,
     backgroundColor: colors.background.secondary,
     color: colors.text.primary,
   },
@@ -37,5 +37,13 @@ export const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 16,
     fontWeight: "600",
+  },
+  labelContainer: {
+    flexDirection: "row",
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 10,
+    top: 35,
   },
 });

@@ -1,5 +1,6 @@
 import { Text, TextInput, View, TouchableOpacity, Keyboard, InputAccessoryView, Platform } from "react-native";
 import { styles } from "../styles/FormField.styles";
+import { InfoButton } from "./InfoButton";
 
 interface FormFieldProps {
   label: string;
@@ -11,6 +12,8 @@ interface FormFieldProps {
   maxLength?: number;
   keyboardType?: "default" | "numeric";
   style?: object;
+  infoButtonTitle?: string;
+  infoButtonMessage?: string;
 }
 
 export const FormField = ({
@@ -22,13 +25,20 @@ export const FormField = ({
   secureTextEntry,
   maxLength,
   keyboardType = "default",
-  style
+  style,
+  infoButtonTitle,
+  infoButtonMessage
 }: FormFieldProps) => {
   const inputAccessoryViewID = 'numericKeyboard';
 
   return (
     <View>
-      <Text style={styles.fieldTitle}>{label}</Text>
+      <View style={styles.labelContainer}>
+        <Text style={styles.fieldTitle}>{label}</Text>
+        {infoButtonTitle && infoButtonMessage && (
+          <InfoButton title={infoButtonTitle} message={infoButtonMessage} />
+        )}
+      </View>
       <TextInput
         style={[styles.input, error && styles.inputError, style]}
         placeholder={placeholder}
