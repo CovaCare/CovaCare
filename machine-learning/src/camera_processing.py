@@ -14,6 +14,7 @@ from config import ( INCLUDE_API_CAMS, INCLUDE_WEBCAM, CAMERA_STREAM_REFRESH_PER
                      DEFAULT_INACTIVITY_SENSITIVITY, CAP_GRAB_COUNT, ENFORCE_REALTIME )
 
 import sys
+import csv
 image_server_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
                                 'services', 'image-server', 'src')
 sys.path.append(image_server_path)
@@ -81,8 +82,8 @@ def manage_camera_threads():
                 current_cameras[url] = settings
 
         if INCLUDE_WEBCAM:
-            current_cameras[0] = (DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DETECTION_ENABLED,
-                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION)
+            current_cameras['../tests/realtime-test-set/gmdcsa24-adl-25.mp4'] = (DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DETECTION_ENABLED,
+                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, 'webcam')
 
         # Restart threads if settings change
         for url, settings in current_cameras.items():
@@ -143,6 +144,8 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
     last_fall_alert_time = datetime.now() - timedelta(seconds=FALL_ALERT_TIMEOUT_PER_CAMERA + 1)
     last_inactivity_alert_time = datetime.now() - timedelta(seconds=INACTIVITY_ALERT_TIMEOUT_PER_CAMERA + 1)
 
+    frame_count = 0
+
     while not stop_event.is_set():
         if ENFORCE_REALTIME and CAP_GRAB_COUNT > 0:
             for _ in range(CAP_GRAB_COUNT):
@@ -152,15 +155,27 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
             ret, frame = cap.read()
 
         if not ret:
-            continue
+            break
+
+        frame_count += 1
 
         fall_keypoints, inactivity_keypoints, frame = process_pose(frame, DRAW_LANDMARKS)
+
+        output_path = os.path.join(os.path.dirname(__file__), 'output.csv')
 
         current_window_class = 0
         fall_detected = False
         if fall_detection_active:
             current_window_class = fall_detector.evaluate_window(fall_keypoints)
             fall_detected = fall_detector.check_history_for_falls()
+            if fall_detected:
+                with open(output_path, "a", newline="") as file:
+                    data = [
+                        [stream_url, frame_count],
+                    ]
+                    writer = csv.writer(file)
+                    writer.writerows(data)
+                fall_detector.clear_windows()
 
         inactive = False
         if inactivity_detection_active:
@@ -207,7 +222,7 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                         image_url = save_incident_frame(frame, "fall", camera_name)
                         message = format_alert_message("fall", camera_name, current_time)
                         message += f"\n\n{image_url}"
-                        success = alert_active_contacts(message)
+                        success = alert_active_contacts(message, frame_count)
                         if success:
                             last_fall_alert_time = current_time
                             
