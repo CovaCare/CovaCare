@@ -172,6 +172,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           <TouchableOpacity
             style={styles.eyeButton}
             onPress={() => setShowPassword(!showPassword)}
+            testID="eye-icon"
           >
             <Icon name={showPassword ? "eye-off" : "eye"} size={20} color="gray" />
           </TouchableOpacity>
