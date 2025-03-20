@@ -1,6 +1,4 @@
-import os
-
-BASE_URL = "https://df55-162-253-8-202.ngrok-free.app"
+BASE_URL = "https://b72c-71-17-226-234.ngrok-free.app"
 
 def update_base_url(url):
     """Update the base URL for the image server"""

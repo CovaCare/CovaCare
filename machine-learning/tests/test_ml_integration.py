@@ -24,10 +24,10 @@ def test_inactivity_detected_from_video(mock_alert):
     fall_detection_active = False
     inactivity_detection_active = True
     inactivity_sensitivity = DEFAULT_INACTIVITY_SENSITIVITY
-    inactivity_duration = 3
+    inactivity_duration = 0.05
 
-    with patch('camera_processing.SEND_ALERTS', True), patch('camera_processing.INACTIVITY_ALERT_TIMEOUT_PER_CAMERA', 0), mock_alert:
-        process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration)
+    with patch('camera_processing.SEND_ALERTS', True), patch('camera_processing.NOT_RET_CONTINUE', False), patch('camera_processing.ENFORCE_REALTIME', False), patch('camera_processing.INACTIVITY_ALERT_TIMEOUT_PER_CAMERA', 0), mock_alert:
+        process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration, "test")
         stop_processing()
         assert mock_alert.called
 
@@ -38,8 +38,8 @@ def test_fall_detected_from_video(mock_alert):
     inactivity_sensitivity = DEFAULT_INACTIVITY_SENSITIVITY
     inactivity_duration = DEFAULT_INACTIVITY_DURATION
 
-    with patch('camera_processing.SEND_ALERTS', True), patch('camera_processing.FALL_ALERT_TIMEOUT_PER_CAMERA', 0), mock_alert:
-        process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration)
+    with patch('camera_processing.SEND_ALERTS', True), patch('camera_processing.NOT_RET_CONTINUE', False), patch('camera_processing.ENFORCE_REALTIME', False), patch('camera_processing.FALL_ALERT_TIMEOUT_PER_CAMERA', 0), mock_alert:
+        process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration, "test")
         stop_processing()
         assert mock_alert.called
 

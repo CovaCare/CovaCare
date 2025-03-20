@@ -1,9 +1,8 @@
 import pytest
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.image_server import app, STATIC_FOLDER
-import shutil
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+from image_server import app, STATIC_FOLDER
 
 @pytest.fixture
 def client():
@@ -13,7 +12,7 @@ def client():
 
 @pytest.fixture
 def setup_test_images():
-    test_images_dir = os.path.join(STATIC_FOLDER, 'images')
+    test_images_dir = os.path.join(STATIC_FOLDER, 'test')
     if not os.path.exists(test_images_dir):
         os.makedirs(test_images_dir)
     
@@ -28,11 +27,11 @@ def setup_test_images():
 
 def test_serve_existing_image(client, setup_test_images):
     """Test serving an existing image"""
-    response = client.get('/static/images/test_image.jpg')
+    response = client.get('/static/test/test_image.jpg')
     assert response.status_code == 200
     assert response.data == b'test image content'
 
 def test_serve_nonexistent_image(client):
     """Test attempting to serve a non-existent image"""
-    response = client.get('/static/images/nonexistent.jpg')
+    response = client.get('/static/test/nonexistent.jpg')
     assert response.status_code == 404
