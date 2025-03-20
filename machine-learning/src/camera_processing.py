@@ -11,12 +11,11 @@ from api_connection import get_api_cameras, alert_active_contacts
 from config import ( INCLUDE_API_CAMS, INCLUDE_WEBCAM, CAMERA_STREAM_REFRESH_PERIOD, DISPLAY_VIDEOS, DRAW_LANDMARKS, 
                      DISPLAY_RESULTS_ON_FRAME, SEND_ALERTS, FALL_ALERT_TIMEOUT_PER_CAMERA, INACTIVITY_ALERT_TIMEOUT_PER_CAMERA, 
                      DEFAULT_INACTIVITY_DETECTION_ENABLED, DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DURATION, 
-                     DEFAULT_INACTIVITY_SENSITIVITY, CAP_GRAB_COUNT, ENFORCE_REALTIME )
+                     DEFAULT_INACTIVITY_SENSITIVITY, CAP_GRAB_COUNT, ENFORCE_REALTIME, NOT_RET_CONTINUE )
 
 import sys
-image_server_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
-                                'services', 'image-server', 'src')
-sys.path.append(image_server_path)
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
+                                'services', 'image-server', 'src'))
 from server_config import BASE_URL
 
 frame_queue = queue.Queue()
@@ -47,9 +46,9 @@ def save_incident_frame(frame, incident_type, camera_name=None):
     cv2.imwrite(filepath, frame, [cv2.IMWRITE_JPEG_QUALITY, 95])
     
     relative_path = f'/static/images/{filename}'
-    full_url = urljoin(BASE_URL, relative_path)
+    media_url = urljoin(BASE_URL, relative_path)
     
-    return full_url
+    return media_url
 
 def manage_camera_threads():
     active_threads = {}
@@ -82,7 +81,7 @@ def manage_camera_threads():
 
         if INCLUDE_WEBCAM:
             current_cameras[0] = (DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DETECTION_ENABLED,
-                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION)
+                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, "webcam")
 
         # Restart threads if settings change
         for url, settings in current_cameras.items():
@@ -152,7 +151,10 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
             ret, frame = cap.read()
 
         if not ret:
-            continue
+            if NOT_RET_CONTINUE:
+                continue
+            else:
+                break
 
         fall_keypoints, inactivity_keypoints, frame = process_pose(frame, DRAW_LANDMARKS)
 
@@ -204,20 +206,20 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                 if fall_detected:
                     time_since_last_fall_alert = (current_time - last_fall_alert_time).total_seconds()
                     if time_since_last_fall_alert > FALL_ALERT_TIMEOUT_PER_CAMERA:
-                        image_url = save_incident_frame(frame, "fall", camera_name)
+                        media_url = save_incident_frame(frame, "fall", camera_name)
                         message = format_alert_message("fall", camera_name, current_time)
-                        message += f"\n\n{image_url}"
-                        success = alert_active_contacts(message)
+                        message += f"\n\n{media_url}"
+                        success = alert_active_contacts(message, media_url)
                         if success:
                             last_fall_alert_time = current_time
                             
                 if inactive:
                     time_since_last_inactivity_alert = (current_time - last_inactivity_alert_time).total_seconds()
                     if time_since_last_inactivity_alert > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
-                        image_url = save_incident_frame(frame, "inactivity", camera_name)
+                        media_url = save_incident_frame(frame, "inactivity", camera_name)
                         message = format_alert_message("inactivity", camera_name, current_time)
-                        message += f"\n\n{image_url}"
-                        success = alert_active_contacts(message)
+                        message += f"\n\n{media_url}"
+                        success = alert_active_contacts(message, media_url)
                         if success:
                             last_inactivity_alert_time = current_time
 

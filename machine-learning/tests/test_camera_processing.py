@@ -20,8 +20,8 @@ def test_format_stream_url(mock_camera_data):
     assert formatted_url == "rtsp://user1:pass1@111.111:554/stream1"
 
 def test_is_within_time_range():
-    start_time = datetime(2025, 3, 5, 11, 30, 0).time()
-    end_time = datetime(2025, 3, 5, 13, 30, 0).time()
+    start_time = "09:00"
+    end_time = "13:30"
     now = datetime(2025, 3, 5, 12, 30, 0).time()
 
     result = is_within_time_range(start_time, end_time, now)

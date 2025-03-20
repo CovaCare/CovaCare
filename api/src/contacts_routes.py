@@ -84,7 +84,7 @@ def test_alert_contact(contact_id):
     alert_service = AlertService()
     try:
         message = "This is a test alert from CovaCare!"
-        result = alert_service.send_alert(contact['phone_number'], message)
+        result = alert_service.send_alert(contact['phone_number'], message, media_url="https://b72c-71-17-226-234.ngrok-free.app/static/images/fall_incident_test_20250319_180420.jpeg")
         return jsonify({
             "success": True,
             "message": f"Test alert sent to {contact['name']} at {contact['phone_number']}.",
@@ -116,12 +116,14 @@ def alert_all_contacts():
             "message": "No active contacts found."
         }), 404
     
+    media_url = data.get("media_url", None)
+    
     alert_service = AlertService()
     failed_contacts = []
     
     for contact in contacts:
         try:
-            result = alert_service.send_alert(contact['phone_number'], message)
+            result = alert_service.send_alert(contact['phone_number'], message, media_url)
             print(f"Alert sent to {contact['name']} at {contact['phone_number']}. SID: {result}")
         except Exception as e:
             failed_contacts.append({
