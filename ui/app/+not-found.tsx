@@ -9,8 +9,8 @@ const NotFoundPage = () => {
       <View style={styles.contentContainer}>
         <Text style={styles.title}>This page doesn't exist</Text>
         <Text style={styles.message}>
-          Oops! It seems you've wandered into uncharted territory.{"\n"}
-          The page you're looking for doesn't exist.
+          Oops! You've reached a part of CovaCare that doesn't exist.{"\n"}
+          Let's get you back to where you need to be.
         </Text>
         <Link href="/" asChild>
           <TouchableOpacity style={styles.button}>
