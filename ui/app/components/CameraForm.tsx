@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, View, TouchableOpacity } from "react-native";
 import { Camera, NewCamera } from "../api/types/cameraTypes";
 import { BaseForm } from "./common/components/BaseForm";
 import { FormField } from "./common/components/FormField";
 import { Card } from "./common/components/Card";
 import { DetectionSection } from "./common/components/DetectionSection";
+import Icon from 'react-native-vector-icons/Ionicons';
+import { styles } from "./common/styles/FormField.styles";
 
 interface CameraFormProps {
   camera: Camera | null;
@@ -19,6 +21,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
   const [username, setUsername] = useState(camera?.username || "");
   const [password, setPassword] = useState(camera?.password || "");
   const [stream_url, setStreamUrl] = useState(camera?.stream_url || "");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [fall_detection_enabled, setFallDetectionEnabled] = useState(
     camera?.fall_detection_enabled === 1
@@ -145,6 +148,10 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           onChangeText={setName}
           error={nameError}
           placeholder="Camera Name"
+          infoButtonTitle={"Camera Name"}
+          infoButtonMessage={
+            "Enter a name for your camera. You might want to use the location where it's installed (e.g., Living Room, Front Door, Kitchen) or any other meaningful name."
+          }
         />
         <FormField
           label="Username"
@@ -153,14 +160,23 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           error={usernameError}
           placeholder="Camera Username"
         />
-        <FormField
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          error={passwordError}
-          placeholder="Camera Password"
-          secureTextEntry
-        />
+        <View style={{ position: 'relative' }}>
+          <FormField
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            error={passwordError}
+            placeholder="Camera Password"
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity
+            style={styles.eyeButton}
+            onPress={() => setShowPassword(!showPassword)}
+            testID="eye-icon"
+          >
+            <Icon name={showPassword ? "eye-off" : "eye"} size={20} color="gray" />
+          </TouchableOpacity>
+        </View>
         <FormField
           label="IP Address"
           value={stream_url}

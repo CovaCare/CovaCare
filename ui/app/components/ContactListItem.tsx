@@ -52,7 +52,7 @@ export const ContactListItem = ({
         <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
           <View style={styles.buttonContent}>
             <Bell size={16} color="#fff" />
-            <Text style={styles.buttonText}>Alert</Text>
+            <Text style={styles.buttonText}>Test</Text>
           </View>
         </TouchableOpacity>
       </View>

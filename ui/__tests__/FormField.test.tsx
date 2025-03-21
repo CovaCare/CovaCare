@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { FormField } from '../app/components/common/components/FormField';
+import colors from '../constants/colors';
 
 describe('FormField', () => {
   const mockOnChangeText = jest.fn();
@@ -49,7 +50,7 @@ describe('FormField', () => {
     );
 
     const input = getByPlaceholderText('Enter value');
-    expect(input.props.style).toContainEqual(expect.objectContaining({ borderColor: '#FF5252' }));
+    expect(input.props.style).toContainEqual(expect.objectContaining({ borderColor: colors.status.error }));
   });
 
   it('handles secure text entry', () => {

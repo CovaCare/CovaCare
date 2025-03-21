@@ -33,6 +33,23 @@ describe("CameraForm", () => {
     expect(mockOnSave).not.toHaveBeenCalled();
   });
 
+  it("toggles password visibility when eye icon is pressed", () => {
+    const { getByPlaceholderText, getByText, getByTestId } = render(
+      <CameraForm camera={null} onSave={mockOnSave} onCancel={mockOnCancel} />
+    );
+
+    const passwordInput = getByPlaceholderText("Camera Password");
+    const eyeIcon = getByTestId("eye-icon");
+
+    expect(passwordInput.props.secureTextEntry).toBe(true);
+
+    fireEvent.press(eyeIcon);
+    expect(passwordInput.props.secureTextEntry).toBe(false);
+
+    fireEvent.press(eyeIcon);
+    expect(passwordInput.props.secureTextEntry).toBe(true);
+  });
+
   it("calls onSave with correct data when form is valid", () => {
     const { getByPlaceholderText, getByText } = render(
       <CameraForm camera={null} onSave={mockOnSave} onCancel={mockOnCancel} />

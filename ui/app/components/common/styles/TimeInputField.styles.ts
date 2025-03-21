@@ -1,9 +1,11 @@
 import { StyleSheet } from "react-native";
+import colors from "../../../../constants/colors";
 
 export const styles = StyleSheet.create({
   label: {
     fontSize: 14,
-    fontWeight: 600,
+    fontWeight: "600",
+    color: colors.text.primary,
   },
   timeRow: {
     flexDirection: "row",
@@ -17,6 +19,7 @@ export const styles = StyleSheet.create({
     height: 40,
     paddingLeft: 4,
     paddingRight: 4,
+    backgroundColor: colors.background.secondary,
   },
   labelContainer: {
     flexDirection: "row",

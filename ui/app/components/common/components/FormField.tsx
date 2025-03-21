@@ -1,5 +1,6 @@
-import { Text, TextInput, View } from "react-native";
+import { Text, TextInput, View, TouchableOpacity, Keyboard, InputAccessoryView, Platform } from "react-native";
 import { styles } from "../styles/FormField.styles";
+import { InfoButton } from "./InfoButton";
 
 interface FormFieldProps {
   label: string;
@@ -11,6 +12,8 @@ interface FormFieldProps {
   maxLength?: number;
   keyboardType?: "default" | "numeric";
   style?: object;
+  infoButtonTitle?: string;
+  infoButtonMessage?: string;
 }
 
 export const FormField = ({
@@ -22,11 +25,20 @@ export const FormField = ({
   secureTextEntry,
   maxLength,
   keyboardType = "default",
-  style
+  style,
+  infoButtonTitle,
+  infoButtonMessage
 }: FormFieldProps) => {
+  const inputAccessoryViewID = 'numericKeyboard';
+
   return (
     <View>
-      <Text style={styles.fieldTitle}>{label}</Text>
+      <View style={styles.labelContainer}>
+        <Text style={styles.fieldTitle}>{label}</Text>
+        {infoButtonTitle && infoButtonMessage && (
+          <InfoButton title={infoButtonTitle} message={infoButtonMessage} />
+        )}
+      </View>
       <TextInput
         style={[styles.input, error && styles.inputError, style]}
         placeholder={placeholder}
@@ -36,7 +48,22 @@ export const FormField = ({
         secureTextEntry={secureTextEntry}
         maxLength={maxLength}
         keyboardType={keyboardType}
+        inputAccessoryViewID={keyboardType === "numeric" ? inputAccessoryViewID : undefined}
       />
+      {Platform.OS === 'ios' && keyboardType === "numeric" && (
+        <InputAccessoryView nativeID={inputAccessoryViewID}>
+          <View style={styles.keyboardAccessory}>
+            <TouchableOpacity 
+              style={styles.keyboardButton} 
+              onPress={() => {
+                Keyboard.dismiss(); 
+              }}
+            >
+              <Text style={styles.saveButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </InputAccessoryView>
+      )}
     </View>
   );
 };
