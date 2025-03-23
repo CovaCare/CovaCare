@@ -7,14 +7,14 @@ const NotFoundPage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>This page doesn't exist</Text>
+        <Text style={styles.title}>Connection Error</Text>
         <Text style={styles.message}>
-          Oops! You've reached a part of CovaCare that doesn't exist.{"\n"}
-          Let's get you back to where you need to be.
+          Oops! We're having trouble connecting to the CovaCare server.{"\n"}
+          Please check your internet connection and try again.
         </Text>
         <Link href="/" asChild>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Return Home</Text>
+            <Text style={styles.buttonText}>Try Again</Text>
           </TouchableOpacity>
         </Link>
       </View>
