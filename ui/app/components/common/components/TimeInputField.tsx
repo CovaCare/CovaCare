@@ -22,9 +22,7 @@ export const TimeInputField = ({
   label,
   testIDPrefix,
 }: TimeInputFieldProps) => {
-  const [allDay, setAllDay] = useState(
-    startTime == "00:00" && endTime == "00:00"
-  );
+  const [allDay, setAllDay] = useState(false);
   const handleAllDayToggle = (value: boolean) => {
     if (value) {
       setAllDay(true);
