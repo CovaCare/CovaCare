@@ -54,3 +54,29 @@ def alert_active_contacts(message, media_url=None):
     except requests.RequestException as e:
         print(f"Error alerting active contacts: {e}")
         return False
+    
+health_checks = {} 
+
+def poll_health_checks():
+    while not stop_event.is_set():
+        print(health_checks)
+        try:
+            response = requests.get(API_BASE_URL + '/health_checks', timeout=API_TIMEOUT)
+            if response.status_code == 200:
+                new_health_checks = response.json()
+                with lock:
+                    for cam in new_health_checks.get("requested_camera_ids", []):
+                        health_checks[cam] = True
+                requests.delete(API_BASE_URL + '/health_checks', timeout=API_TIMEOUT)
+            else:
+                print(f"API error: {response.status_code}")
+        except requests.RequestException as e:
+            print(f"Error polling health checks: {e}")
+        
+        stop_event.wait(API_POLLING_PERIOD)
+
+def start_health_check_polling():
+    thread = threading.Thread(target=poll_health_checks, daemon=True)
+    thread.start()
+    return thread
+

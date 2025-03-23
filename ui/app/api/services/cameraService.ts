@@ -22,3 +22,10 @@ export const deleteCamera = async (
   const response = await apiClient.delete(`/cameras/${camera.id}`);
   return response.data;
 };
+
+export const requestHealthCheck = async (cameraId: number): Promise<any> => {
+  const response = await apiClient.post("/health_checks", {
+    camera_id: cameraId,
+  });
+  return response.data;
+};

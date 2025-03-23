@@ -45,4 +45,23 @@ export const styles = StyleSheet.create({
     color: colors.text.secondary,
     fontWeight: "500",
   },
+  testButton: {
+    backgroundColor: colors.primary,
+    padding: 8,
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: colors.text.light,
+    fontSize: 14,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
 });
