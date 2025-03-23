@@ -1,8 +1,9 @@
 import React from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { Camera } from "../api/types/cameraTypes";
 import { styles } from "./CameraListItem.styles";
 import { Trash2 } from "lucide-react-native";
+import { requestHealthCheck } from "../api/services/cameraService";
 
 interface CameraListItemProps {
   camera: Camera;
@@ -15,6 +16,19 @@ export const CameraListItem = ({
   onSelect,
   onDelete,
 }: CameraListItemProps) => {
+  const handleHealthCheck = async () => {
+    try {
+      await requestHealthCheck(camera.id);
+      Alert.alert(
+        "Success",
+        "A camera health check has been sent to all active contacts."
+      );
+    } catch (error) {
+      console.error("Error requesting health check:", error);
+      Alert.alert("Error", "Failed to request health check.");
+    }
+  };
+
   return (
     <TouchableOpacity
       style={styles.cameraItem}
@@ -48,9 +62,16 @@ export const CameraListItem = ({
           </Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => onDelete(camera)} testID="deleteIcon">
-        <Trash2 size={25} color="gray" />
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.testButton} onPress={handleHealthCheck}>
+          <View style={styles.buttonContent}>
+            <Text style={styles.buttonText}>Health Check</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onDelete(camera)} testID="deleteIcon">
+          <Trash2 size={25} color="gray" />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 };
