@@ -7,7 +7,7 @@ import os
 from pose import process_pose
 from fall_detection import FallDetector
 from inactivity_detection import InactivityMonitor
-from api_connection import get_api_cameras, alert_active_contacts
+from api_connection import get_api_cameras, alert_active_contacts, health_checks, lock
 from config import ( INCLUDE_API_CAMS, INCLUDE_WEBCAM, CAMERA_STREAM_REFRESH_PERIOD, DISPLAY_VIDEOS, DRAW_LANDMARKS, 
                      DISPLAY_RESULTS_ON_FRAME, SEND_ALERTS, FALL_ALERT_TIMEOUT_PER_CAMERA, INACTIVITY_ALERT_TIMEOUT_PER_CAMERA, 
                      DEFAULT_INACTIVITY_DETECTION_ENABLED, DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DURATION, 
@@ -74,14 +74,15 @@ def manage_camera_threads():
                     inactivity_active,
                     cam.get("inactivity_detection_sensitivity", DEFAULT_INACTIVITY_SENSITIVITY),
                     cam.get("inactivity_detection_duration", DEFAULT_INACTIVITY_DURATION),
-                    cam.get("name", "Unknown Camera")
+                    cam.get("name", "Unknown Camera"),
+                    cam.get("id", 0)
                 )
 
                 current_cameras[url] = settings
 
         if INCLUDE_WEBCAM:
             current_cameras[0] = (DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DETECTION_ENABLED,
-                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, "webcam")
+                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, "webcam", 0)
 
         # Restart threads if settings change
         for url, settings in current_cameras.items():
@@ -130,10 +131,17 @@ def is_within_time_range(start_time, end_time, now):
     return start_dt <= now_dt <= end_dt
 
 
-def process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration, camera_name):
+def process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration, camera_name, camera_id):
     cap = cv2.VideoCapture(stream_url)
     if not cap.isOpened():
-        print(f"Failed to connect to {stream_url}")
+        print(f"Failed to connect to {stream_url}. Waiting for health check requests.")
+        while not stop_event.is_set():
+            if camera_id in health_checks and health_checks[camera_id] is True:
+                with lock:
+                    health_checks[camera_id] = False
+                alert_active_contacts(f"Health check for camera: {camera_name}:\n\n"
+                                       "Camera stream failed to connect. Make sure username, password, and IP address are configured correctly.")
+            stop_event.wait(5)
         return
 
     fall_detector = FallDetector()
@@ -208,7 +216,6 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                     if time_since_last_fall_alert > FALL_ALERT_TIMEOUT_PER_CAMERA:
                         media_url = save_incident_frame(frame, "fall", camera_name)
                         message = format_alert_message("fall", camera_name, current_time)
-                        message += f"\n\n{media_url}"
                         success = alert_active_contacts(message, media_url)
                         if success:
                             last_fall_alert_time = current_time
@@ -218,10 +225,16 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                     if time_since_last_inactivity_alert > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
                         media_url = save_incident_frame(frame, "inactivity", camera_name)
                         message = format_alert_message("inactivity", camera_name, current_time)
-                        message += f"\n\n{media_url}"
                         success = alert_active_contacts(message, media_url)
                         if success:
                             last_inactivity_alert_time = current_time
+
+                if camera_id in health_checks and health_checks[camera_id] is True:
+                    with lock:
+                        health_checks[camera_id] = False
+                    media_url = save_incident_frame(frame, "health_check", camera_name)
+                    alert_active_contacts(f"Health check for camera: {camera_name}:\n\n"
+                                            "Status: Online", media_url)
 
         if DISPLAY_VIDEOS:
             frame_queue.put((stream_url, frame))
