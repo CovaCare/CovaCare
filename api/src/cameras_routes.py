@@ -29,6 +29,7 @@ def add_camera():
     stream_url = data.get("stream_url", "")
     fall_detection_enabled = data.get("fall_detection_enabled", 0)
     inactivity_detection_enabled = data.get("inactivity_detection_enabled", 0)
+    send_image_with_alert = data.get("send_image_with_alert", 0)
 
     fall_detection_start_time = data.get("fall_detection_start_time", "")
     fall_detection_end_time = data.get("fall_detection_end_time", "")
@@ -47,6 +48,7 @@ def add_camera():
             stream_url,
             fall_detection_enabled,
             inactivity_detection_enabled,
+            send_image_with_alert,
             fall_detection_start_time,
             fall_detection_end_time,
             inactivity_detection_start_time,
@@ -54,7 +56,7 @@ def add_camera():
             inactivity_detection_sensitivity,
             inactivity_detection_duration
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             name,
@@ -63,6 +65,7 @@ def add_camera():
             stream_url,
             fall_detection_enabled,
             inactivity_detection_enabled,
+            send_image_with_alert,
             fall_detection_start_time,
             fall_detection_end_time,
             inactivity_detection_start_time,
@@ -95,6 +98,7 @@ def update_camera(camera_id):
     stream_url = data.get("stream_url", existing_camera["stream_url"])
     fall_detection_enabled = data.get("fall_detection_enabled", existing_camera["fall_detection_enabled"])
     inactivity_detection_enabled = data.get("inactivity_detection_enabled", existing_camera["inactivity_detection_enabled"])
+    send_image_with_alert = data.get("send_image_with_alert", existing_camera["send_image_with_alert"])
 
     fall_detection_start_time = data.get("fall_detection_start_time", existing_camera["fall_detection_start_time"])
     fall_detection_end_time = data.get("fall_detection_end_time", existing_camera["fall_detection_end_time"])
@@ -113,6 +117,7 @@ def update_camera(camera_id):
             stream_url = ?,
             fall_detection_enabled = ?,
             inactivity_detection_enabled = ?,
+            send_image_with_alert = ?,
             fall_detection_start_time = ?,
             fall_detection_end_time = ?,
             inactivity_detection_start_time = ?,
@@ -129,6 +134,7 @@ def update_camera(camera_id):
             stream_url,
             fall_detection_enabled,
             inactivity_detection_enabled,
+            send_image_with_alert,
             fall_detection_start_time,
             fall_detection_end_time,
             inactivity_detection_start_time,

@@ -21,6 +21,9 @@ interface DetectionSectionProps {
   onSensitivityChange?: (value: number) => void;
   duration?: string;
   onDurationChange?: (value: string) => void;
+  showTimeInputs?: boolean;
+  infoButtonTitle?: string;
+  infoButtonMessage?: string;
 }
 
 export const DetectionSection = ({
@@ -37,6 +40,9 @@ export const DetectionSection = ({
   onSensitivityChange,
   duration,
   onDurationChange,
+  showTimeInputs = true,
+  infoButtonTitle,
+  infoButtonMessage,
 }: DetectionSectionProps) => {
   return (
     <Card title={title} description={description}>
@@ -47,19 +53,23 @@ export const DetectionSection = ({
           value={enabled}
           onValueChange={onEnabledChange}
           testID={`${title.toLowerCase().replace(" ", "-")}-toggle`}
+          infoButtonTitle={infoButtonTitle}
+          infoButtonMessage={infoButtonMessage}
         />
       </View>
 
       {enabled && (
         <>
-          <TimeInputField
-            label="Active Hours"
-            startTime={startTime}
-            endTime={endTime}
-            onStartTimeChange={onStartTimeChange}
-            onEndTimeChange={onEndTimeChange}
-            testIDPrefix={title.toLowerCase().replace(" ", "-")}
-          />
+          {showTimeInputs && (
+            <TimeInputField
+              label="Active Hours"
+              startTime={startTime}
+              endTime={endTime}
+              onStartTimeChange={onStartTimeChange}
+              onEndTimeChange={onEndTimeChange}
+              testIDPrefix={title.toLowerCase().replace(" ", "-")}
+            />
+          )}
 
           {showSensitivity &&
             sensitivity !== undefined &&
