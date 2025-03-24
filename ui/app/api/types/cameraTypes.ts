@@ -6,6 +6,7 @@ export type Camera = {
   stream_url: string;
   fall_detection_enabled: number;
   inactivity_detection_enabled: number;
+  send_image_with_alert: number;
   fall_detection_start_time: string;
   fall_detection_end_time: string;
   inactivity_detection_start_time: string;

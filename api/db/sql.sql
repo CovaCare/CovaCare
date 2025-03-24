@@ -18,6 +18,7 @@ CREATE TABLE cameras (
     stream_url TEXT, -- Streaming URL or IP address
     fall_detection_enabled INTEGER NOT NULL CHECK (fall_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
     inactivity_detection_enabled INTEGER NOT NULL CHECK (inactivity_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
+    send_image_with_alert INTEGER NOT NULL CHECK (send_image_with_alert IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
 
     fall_detection_start_time TIME, -- Start time for fall detection active hours (e.g., "08:00")
     fall_detection_end_time   TIME, -- End time for fall detection active hours (e.g., "18:00")
