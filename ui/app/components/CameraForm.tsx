@@ -5,7 +5,7 @@ import { BaseForm } from "./common/components/BaseForm";
 import { FormField } from "./common/components/FormField";
 import { Card } from "./common/components/Card";
 import { DetectionSection } from "./common/components/DetectionSection";
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from "react-native-vector-icons/Ionicons";
 import { styles } from "./common/styles/FormField.styles";
 import { ToggleField } from "./common/components/ToggleField";
 
@@ -146,7 +146,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
       onSave={handleSave}
       onCancel={onCancel}
     >
-      <Card title="Camera Information" description="">
+      <Card title="General" description="">
         <FormField
           label="Name"
           value={name}
@@ -167,7 +167,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           placeholder="Camera Username"
           infoButtonTitle="Camera Username"
           infoButtonMessage="This is the login username for accessing the camera stream. It’s usually found in the user manual or on a label on the camera."
-          />
+        />
         <View style={{ position: "relative" }}>
           <FormField
             label="Password"
@@ -178,13 +178,17 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
             secureTextEntry={!showPassword}
             infoButtonTitle="Camera Password"
             infoButtonMessage="This is the password required to access the camera stream. Check the manual or product sticker if you're unsure."
-            />
+          />
           <TouchableOpacity
             style={styles.eyeButton}
             onPress={() => setShowPassword(!showPassword)}
             testID="eye-icon"
           >
-            <Icon name={showPassword ? "eye-off" : "eye"} size={22} color="gray" />
+            <Icon
+              name={showPassword ? "eye-off" : "eye"}
+              size={22}
+              color="gray"
+            />
           </TouchableOpacity>
         </View>
         <FormField
@@ -195,23 +199,18 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           error={streamUrlError}
           infoButtonTitle="Camera Stream URL"
           infoButtonMessage="Enter the camera’s IP address or streaming URL. You can usually find this in the user manual or on a sticker on the camera."
-          />
+        />
+        <ToggleField
+          label="Send Image with Alert"
+          infoButtonTitle={"Alert Images"}
+          infoButtonMessage={
+            "If this field is active, emergency alerts from this camera will contain an image of the incident."
+          }
+          spaceBetween={true}
+          value={send_image_with_alert}
+          onValueChange={setSendImageWithAlert}
+        />
       </Card>
-
-      <DetectionSection
-        title="Send Image with Alert"
-        description=""
-        enabled={send_image_with_alert}
-        onEnabledChange={setSendImageWithAlert}
-        startTime=""
-        endTime=""
-        onStartTimeChange={() => {}}
-        onEndTimeChange={() => {}}
-        showSensitivity={false}
-        showTimeInputs={false}
-        infoButtonTitle="Send Image with Alert"
-        infoButtonMessage="When enabled, alerts will include an image of the incident captured by the camera."
-      />
 
       <DetectionSection
         title="Fall Detection"
