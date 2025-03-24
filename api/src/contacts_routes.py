@@ -84,7 +84,7 @@ def test_alert_contact(contact_id):
     alert_service = AlertService()
     try:
         message = "This is a test alert from CovaCare!"
-        result = alert_service.send_alert(contact['phone_number'], message, media_url="https://b72c-71-17-226-234.ngrok-free.app/static/images/fall_incident_test_20250319_180420.jpeg")
+        result = alert_service.send_alert(contact['phone_number'], message)
         return jsonify({
             "success": True,
             "message": f"Test alert sent to {contact['name']} at {contact['phone_number']}.",
