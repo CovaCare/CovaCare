@@ -168,18 +168,25 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           infoButtonTitle="Camera Username"
           infoButtonMessage="This is the login username for accessing the camera stream. It’s usually found in the user manual or on a label on the camera."
           />
-
-        <FormField
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Camera password"
-          error={passwordError}
-          secureTextEntry={!showPassword}
-          infoButtonTitle="Camera Password"
-          infoButtonMessage="This is the password required to access the camera stream. Check the manual or product sticker if you're unsure."
-          />
-
+        <View style={{ position: "relative" }}>
+          <FormField
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Camera password"
+            error={passwordError}
+            secureTextEntry={!showPassword}
+            infoButtonTitle="Camera Password"
+            infoButtonMessage="This is the password required to access the camera stream. Check the manual or product sticker if you're unsure."
+            />
+          <TouchableOpacity
+            style={styles.eyeButton}
+            onPress={() => setShowPassword(!showPassword)}
+            testID="eye-icon"
+          >
+            <Icon name={showPassword ? "eye-off" : "eye"} size={22} color="gray" />
+          </TouchableOpacity>
+        </View>
         <FormField
           label="IP Address"
           value={stream_url}
