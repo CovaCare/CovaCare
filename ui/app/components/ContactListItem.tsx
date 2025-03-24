@@ -46,14 +46,14 @@ export const ContactListItem = ({
         </View>
       </TouchableOpacity>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => onDelete(contact)} testID="deleteIcon">
-          <Trash2 size={25} color="gray" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
+      <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
           <View style={styles.buttonContent}>
             <Bell size={16} color="#fff" />
             <Text style={styles.buttonText}>Test</Text>
           </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onDelete(contact)} testID="deleteIcon">
+          <Trash2 size={25} color="gray" />
         </TouchableOpacity>
       </View>
     </View>
