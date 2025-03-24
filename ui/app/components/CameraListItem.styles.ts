@@ -33,17 +33,26 @@ export const styles = StyleSheet.create({
   detectionStatus: {
     gap: 4,
   },
-  statusText: {
+  statusRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  statusLabel: {
     fontSize: 14,
     color: colors.text.primary,
   },
   enabled: {
+    fontSize: 14,
     color: colors.primary,
     fontWeight: "500",
+    minWidth: 76,
   },
   disabled: {
+    fontSize: 14,
     color: colors.text.secondary,
     fontWeight: "500",
+    minWidth: 76,
   },
   testButton: {
     backgroundColor: colors.primary,

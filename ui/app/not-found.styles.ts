@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: 72,
+    fontSize: 50,
     fontWeight: "bold",
     color: colors.text.primary,
     marginBottom: 16,

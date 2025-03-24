@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, Alert, Modal, RefreshControl } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { View, Alert, Modal } from "react-native";
 import {
   getContacts,
   addContact,
@@ -10,6 +10,9 @@ import { Contact, NewContact } from "../api/types/contactTypes";
 import { ContactList } from "../components/ContactList";
 import { ContactForm } from "../components/ContactForm";
 import { styles } from "./styles/ContactScreen.styles";
+import { AxiosError } from "axios";
+
+const REFRESH_INTERVAL = 30000;
 
 const ContactScreen = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -17,25 +20,31 @@ const ContactScreen = () => {
   const [currentContact, setCurrentContact] = useState<Contact | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
     try {
       const data = await getContacts();
       setContacts(data);
     } catch (error) {
-      console.error("Error fetching contacts:", error);
-      Alert.alert("Error", "Failed to fetch contacts.");
+      if (error instanceof AxiosError && error.response?.status !== 404) {
+        console.error("Error fetching contacts:", error);
+        Alert.alert("Error", "Failed to fetch contacts.");
+      }
     }
-  };
+  }, []);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchContacts();
     setRefreshing(false);
-  };
+  }, [fetchContacts]);
 
   useEffect(() => {
     fetchContacts();
-  }, []);
+    
+    const intervalId = setInterval(fetchContacts, REFRESH_INTERVAL);
+    
+    return () => clearInterval(intervalId);
+  }, [fetchContacts]);
 
   const handleAddContact = async (newContact: NewContact) => {
     try {
@@ -58,8 +67,10 @@ const ContactScreen = () => {
       setModalVisible(false);
       setCurrentContact(null);
     } catch (error) {
-      console.error("Error updating contact:", error);
-      Alert.alert("Error", "Failed to update contact.");
+      if (error instanceof AxiosError && error.response?.status !== 404) {
+        console.error("Error updating contact:", error);
+        Alert.alert("Error", "Failed to update contact.");
+      }
     }
   };
 
@@ -79,8 +90,10 @@ const ContactScreen = () => {
                 prev.filter((con) => con.id !== contact.id)
               );
             } catch (error) {
-              console.error("Error deleting contact:", error);
-              Alert.alert("Error", "Failed to delete contact.");
+              if (error instanceof AxiosError && error.response?.status !== 404) {
+                console.error("Error deleting contact:", error);
+                Alert.alert("Error", "Failed to delete contact.");
+              }
             }
           },
         },

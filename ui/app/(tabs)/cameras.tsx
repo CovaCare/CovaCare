@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Alert, Modal, RefreshControl } from "react-native";
 import {
   getCameras,
@@ -10,6 +10,9 @@ import { Camera, NewCamera } from "../api/types/cameraTypes";
 import { CameraList } from "../components/CameraList";
 import { CameraForm } from "../components/CameraForm";
 import { styles } from "./styles/CameraScreen.styles";
+import { AxiosError } from "axios";
+
+const REFRESH_INTERVAL = 30000;
 
 const CameraScreen = () => {
   const [cameras, setCameras] = useState<Camera[]>([]);
@@ -17,25 +20,31 @@ const CameraScreen = () => {
   const [currentCamera, setCurrentCamera] = useState<Camera | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchCameras = async () => {
+  const fetchCameras = useCallback(async () => {
     try {
       const data = await getCameras();
       setCameras(data);
     } catch (error) {
-      console.error("Error fetching cameras:", error);
-      Alert.alert("Error", "Failed to fetch cameras.");
+      if (error instanceof AxiosError && error.response?.status !== 404) {
+        console.error("Error fetching cameras:", error);
+        Alert.alert("Error", "Failed to fetch cameras.");
+      }
     }
-  };
+  }, []);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchCameras();
     setRefreshing(false);
-  };
+  }, [fetchCameras]);
 
   useEffect(() => {
     fetchCameras();
-  }, []);
+    
+    const intervalId = setInterval(fetchCameras, REFRESH_INTERVAL);
+    
+    return () => clearInterval(intervalId);
+  }, [fetchCameras]);
 
   const handleAddCamera = async (newCamera: NewCamera) => {
     try {
@@ -58,8 +67,10 @@ const CameraScreen = () => {
       setModalVisible(false);
       setCurrentCamera(null);
     } catch (error) {
-      console.error("Error updating camera:", error);
-      Alert.alert("Error", "Failed to update camera.");
+      if (error instanceof AxiosError && error.response?.status !== 404) {
+        console.error("Error updating camera:", error);
+        Alert.alert("Error", "Failed to update camera.");
+      }
     }
   };
 
@@ -77,8 +88,10 @@ const CameraScreen = () => {
               await deleteCamera(camera);
               setCameras((prev) => prev.filter((cam) => cam.id !== camera.id));
             } catch (error) {
-              console.error("Error deleting camera:", error);
-              Alert.alert("Error", "Failed to delete camera.");
+              if (error instanceof AxiosError && error.response?.status !== 404) {
+                console.error("Error deleting camera:", error);
+                Alert.alert("Error", "Failed to delete camera.");
+              }
             }
           },
         },

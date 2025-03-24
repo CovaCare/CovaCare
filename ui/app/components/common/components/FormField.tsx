@@ -29,7 +29,7 @@ export const FormField = ({
   infoButtonTitle,
   infoButtonMessage
 }: FormFieldProps) => {
-  const inputAccessoryViewID = 'numericKeyboard';
+  const inputAccessoryViewID = `keyboard-${label.replace(/\s+/g, '')}`;
 
   return (
     <View>
@@ -48,9 +48,9 @@ export const FormField = ({
         secureTextEntry={secureTextEntry}
         maxLength={maxLength}
         keyboardType={keyboardType}
-        inputAccessoryViewID={keyboardType === "numeric" ? inputAccessoryViewID : undefined}
+        inputAccessoryViewID={inputAccessoryViewID}
       />
-      {Platform.OS === 'ios' && keyboardType === "numeric" && (
+      {Platform.OS === 'ios' && (
         <InputAccessoryView nativeID={inputAccessoryViewID}>
           <View style={styles.keyboardAccessory}>
             <TouchableOpacity 

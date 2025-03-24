@@ -38,18 +38,18 @@ export const CameraListItem = ({
         <Text style={styles.cameraName}>{camera.name}</Text>
         <Text style={styles.cameraDetails}>{camera.stream_url}</Text>
         <View style={styles.detectionStatus}>
-          <Text style={styles.statusText}>
-            Fall Detection:
+          <View style={styles.statusRow}>
+            <Text style={styles.statusLabel}>Fall Detection: </Text>
             <Text
               style={
                 camera.fall_detection_enabled ? styles.enabled : styles.disabled
               }
             >
-              {camera.fall_detection_enabled ? " Enabled" : " Disabled"}
+              {camera.fall_detection_enabled ? "Enabled" : "Disabled"}
             </Text>
-          </Text>
-          <Text style={styles.statusText}>
-            Inactivity Detection:
+          </View>
+          <View style={styles.statusRow}>
+            <Text style={styles.statusLabel}>Inactivity Detection: </Text>
             <Text
               style={
                 camera.inactivity_detection_enabled
@@ -57,9 +57,19 @@ export const CameraListItem = ({
                   : styles.disabled
               }
             >
-              {camera.inactivity_detection_enabled ? " Enabled" : " Disabled"}
+              {camera.inactivity_detection_enabled ? "Enabled" : "Disabled"}
             </Text>
-          </Text>
+          </View>
+          <View style={styles.statusRow}>
+            <Text style={styles.statusLabel}>Send Image with Alert: </Text>
+            <Text
+              style={
+                camera.send_image_with_alert ? styles.enabled : styles.disabled
+              }
+            >
+              {camera.send_image_with_alert ? "Enabled" : "Disabled"}
+            </Text>
+          </View>
         </View>
       </View>
       <View style={styles.buttonContainer}>
