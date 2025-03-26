@@ -1,6 +1,6 @@
 export const colors = {
   // Primary colors
-  primary: '#007BFF',
+  primary: '#139de2',
   
   background: {
     primary: '#f8f9fa',
@@ -22,6 +22,7 @@ export const colors = {
   // Status colors
   status: {
     error: '#ff5252',
+    success: '#0db292',
   },
 } as const;
 

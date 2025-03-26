@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   },
   enabled: {
     fontSize: 14,
-    color: colors.primary,
+    color: colors.status.success,
     fontWeight: "500",
     minWidth: 76,
   },

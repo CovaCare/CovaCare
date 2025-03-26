@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
   active: {
-    color: colors.primary,
+    color: colors.status.success,
     fontWeight: "500",
   },
   inactive: {
