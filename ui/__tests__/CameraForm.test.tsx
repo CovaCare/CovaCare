@@ -16,10 +16,10 @@ describe("CameraForm", () => {
     );
 
     expect(getByText("Add New Camera")).toBeTruthy();
-    expect(getByPlaceholderText("Camera Name")).toBeTruthy();
-    expect(getByPlaceholderText("Camera Username")).toBeTruthy();
-    expect(getByPlaceholderText("Camera Password")).toBeTruthy();
-    expect(getByPlaceholderText("192.168.0.100")).toBeTruthy();
+    expect(getByPlaceholderText("Enter a camera name")).toBeTruthy();
+    expect(getByPlaceholderText("Enter the camera's username")).toBeTruthy();
+    expect(getByPlaceholderText("Enter the camera's password")).toBeTruthy();
+    expect(getByPlaceholderText("Enter the camera's IP address")).toBeTruthy();
     expect(getByText("Fall Detection")).toBeTruthy();
     expect(getByText("Inactivity Detection")).toBeTruthy();
   });
@@ -34,11 +34,11 @@ describe("CameraForm", () => {
   });
 
   it("toggles password visibility when eye icon is pressed", () => {
-    const { getByPlaceholderText, getByText, getByTestId } = render(
+    const { getByPlaceholderText, getByTestId } = render(
       <CameraForm camera={null} onSave={mockOnSave} onCancel={mockOnCancel} />
     );
 
-    const passwordInput = getByPlaceholderText("Camera Password");
+    const passwordInput = getByPlaceholderText("Enter the camera's password");
     const eyeIcon = getByTestId("eye-icon");
 
     expect(passwordInput.props.secureTextEntry).toBe(true);
@@ -55,13 +55,22 @@ describe("CameraForm", () => {
       <CameraForm camera={null} onSave={mockOnSave} onCancel={mockOnCancel} />
     );
 
-    fireEvent.changeText(getByPlaceholderText("Camera Name"), "Test Camera");
-    fireEvent.changeText(getByPlaceholderText("Camera Username"), "admin");
     fireEvent.changeText(
-      getByPlaceholderText("Camera Password"),
+      getByPlaceholderText("Enter a camera name"),
+      "Test Camera"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's username"),
+      "admin"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's password"),
       "password123"
     );
-    fireEvent.changeText(getByPlaceholderText("192.168.0.100"), "123.000.123");
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's IP address"),
+      "123.000.123"
+    );
 
     fireEvent.press(getByText("Save"));
 
@@ -71,13 +80,14 @@ describe("CameraForm", () => {
       password: "password123",
       stream_url: "123.000.123",
       fall_detection_enabled: 0,
-      fall_detection_start_time: "00:00",
+      fall_detection_start_time: "05:00",
       fall_detection_end_time: "00:00",
       inactivity_detection_enabled: 0,
-      inactivity_detection_start_time: "00:00",
+      inactivity_detection_start_time: "05:00",
       inactivity_detection_end_time: "00:00",
       inactivity_detection_sensitivity: 50,
-      inactivity_detection_duration: 30,
+      inactivity_detection_duration: 5,
+      send_image_with_alert: 0,
     });
   });
 
@@ -98,6 +108,7 @@ describe("CameraForm", () => {
       inactivity_detection_duration: 30,
       created_at: "2024-01-01",
       updated_at: "2024-01-01",
+      send_image_with_alert: 1,
     };
 
     const { getByText, getByDisplayValue, getByTestId } = render(
@@ -143,13 +154,22 @@ describe("CameraForm", () => {
     );
 
     // Fill in required fields
-    fireEvent.changeText(getByPlaceholderText("Camera Name"), "Test Camera");
-    fireEvent.changeText(getByPlaceholderText("Camera Username"), "admin");
     fireEvent.changeText(
-      getByPlaceholderText("Camera Password"),
+      getByPlaceholderText("Enter a camera name"),
+      "Test Camera"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's username"),
+      "admin"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's password"),
       "password123"
     );
-    fireEvent.changeText(getByPlaceholderText("192.168.0.100"), "192.111.123");
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's IP address"),
+      "192.111.123"
+    );
 
     fireEvent.press(getByText("Save"));
 
@@ -165,7 +185,8 @@ describe("CameraForm", () => {
       inactivity_detection_start_time: "00:00",
       inactivity_detection_end_time: "00:00",
       inactivity_detection_sensitivity: 50,
-      inactivity_detection_duration: 30,
+      inactivity_detection_duration: 5,
+      send_image_with_alert: 0,
     });
   });
 });

@@ -4,6 +4,7 @@ import { Camera } from "../api/types/cameraTypes";
 import { styles } from "./CameraListItem.styles";
 import { Trash2 } from "lucide-react-native";
 import { requestHealthCheck } from "../api/services/cameraService";
+import colors from "../../constants/colors";
 
 interface CameraListItemProps {
   camera: Camera;
@@ -60,16 +61,6 @@ export const CameraListItem = ({
               {camera.inactivity_detection_enabled ? "Enabled" : "Disabled"}
             </Text>
           </View>
-          <View style={styles.statusRow}>
-            <Text style={styles.statusLabel}>Send Image with Alert: </Text>
-            <Text
-              style={
-                camera.send_image_with_alert ? styles.enabled : styles.disabled
-              }
-            >
-              {camera.send_image_with_alert ? "Enabled" : "Disabled"}
-            </Text>
-          </View>
         </View>
       </View>
       <View style={styles.buttonContainer}>
@@ -79,7 +70,7 @@ export const CameraListItem = ({
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onDelete(camera)} testID="deleteIcon">
-          <Trash2 size={25} color="gray" />
+          <Trash2 size={25} color={colors.icon.primary} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

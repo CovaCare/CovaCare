@@ -36,6 +36,7 @@ const mockCamera = {
   inactivity_detection_duration: 30,
   created_at: "2025-03-01",
   updated_at: "2025-03-01",
+  send_image_with_alert: 0,
 };
 
 const mockContact = {
@@ -129,11 +130,20 @@ describe("App Integration Tests", () => {
     await findByText("172.16.1.110");
 
     fireEvent.press(getByText("Add New Camera"));
-    fireEvent.changeText(getByPlaceholderText("Camera Name"), "New Camera");
-    fireEvent.changeText(getByPlaceholderText("Camera Username"), "admin");
-    fireEvent.changeText(getByPlaceholderText("Camera Password"), "pass123");
     fireEvent.changeText(
-      getByPlaceholderText("192.168.0.100"),
+      getByPlaceholderText("Enter a camera name"),
+      "New Camera"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's username"),
+      "admin"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's password"),
+      "pass123"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the camera's IP address"),
       "192.168.1.200"
     );
     fireEvent.press(getByText("Save"));
@@ -174,8 +184,14 @@ describe("App Integration Tests", () => {
     await findByText("13061112222");
 
     fireEvent.press(getByText("Add New Contact"));
-    fireEvent.changeText(getByPlaceholderText("Contact Name"), "Jane Doe");
-    fireEvent.changeText(getByPlaceholderText("Phone Number"), "13061234567");
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the contact's name"),
+      "Jane Doe"
+    );
+    fireEvent.changeText(
+      getByPlaceholderText("Enter the contact's phone number"),
+      "13061234567"
+    );
     fireEvent.press(getByText("Save"));
 
     await findByText("Jane Doe");

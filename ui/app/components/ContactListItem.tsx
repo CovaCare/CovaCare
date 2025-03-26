@@ -4,6 +4,7 @@ import { Contact } from "../api/types/contactTypes";
 import { styles } from "./ContactListItem.styles";
 import { testAlertContact } from "../api/services/contactService";
 import { Trash2, Bell, Phone } from "lucide-react-native";
+import colors from "@/constants/colors";
 
 interface ContactListItemProps {
   contact: Contact;
@@ -32,8 +33,15 @@ export const ContactListItem = ({
         <View>
           <Text style={styles.contactName}>{contact.name}</Text>
           <View style={styles.phoneContainer}>
-            <Phone size={16} color="#666" />
-            <Text style={styles.contactPhone}>{contact.phone_number}</Text>
+            <Phone size={16} color={colors.icon.primary} />
+            <Text style={styles.contactPhone}>
+              {contact.phone_number.length == 10
+                ? contact.phone_number.replace(
+                    /(\d{3})(\d{3})(\d{4})/,
+                    "$1-$2-$3"
+                  )
+                : contact.phone_number}
+            </Text>
           </View>
           <Text style={styles.contactStatus}>
             Status:{" "}
@@ -46,14 +54,14 @@ export const ContactListItem = ({
         </View>
       </TouchableOpacity>
       <View style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
+        <TouchableOpacity style={styles.testButton} onPress={handleTestAlert}>
           <View style={styles.buttonContent}>
-            <Bell size={16} color="#fff" />
+            <Bell size={16} color={colors.icon.secondary} />
             <Text style={styles.buttonText}>Test</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onDelete(contact)} testID="deleteIcon">
-          <Trash2 size={25} color="gray" />
+          <Trash2 size={25} color={colors.icon.primary} />
         </TouchableOpacity>
       </View>
     </View>

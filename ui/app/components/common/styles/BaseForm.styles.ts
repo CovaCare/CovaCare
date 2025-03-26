@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: colors.background.secondary,
     borderWidth: 2,
-    borderColor: colors.primary,
+    borderColor: colors.secondary,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButtonText: {
-    color: colors.primary,
+    color: colors.secondary,
     fontWeight: "bold",
   },
   saveButton: {

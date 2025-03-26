@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: colors.text.primary,
+    marginLeft: 4,
   },
   timeRow: {
     flexDirection: "row",
@@ -25,6 +26,5 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 12,
-    gap: 4,
   },
 });

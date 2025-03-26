@@ -44,13 +44,13 @@ export const styles = StyleSheet.create({
   },
   enabled: {
     fontSize: 14,
-    color: colors.status.success,
+    color: colors.primary,
     fontWeight: "500",
     minWidth: 76,
   },
   disabled: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: colors.status.disabled,
     fontWeight: "500",
     minWidth: 76,
   },

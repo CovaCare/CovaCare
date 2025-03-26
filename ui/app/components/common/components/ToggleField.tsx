@@ -1,6 +1,7 @@
 import { Text, View, Switch } from "react-native";
 import { styles } from "../styles/ToggleField.styles";
 import { InfoButton } from "./InfoButton";
+import colors from "../../../../constants/colors";
 
 interface ToggleFieldProps {
   label: string;
@@ -44,7 +45,7 @@ export const ToggleField = ({
         value={value}
         onValueChange={onValueChange}
         testID={testID}
-        trackColor={{ false: "#f4f3f4", true: "#007BFF" }}
+        trackColor={{ false: colors.status.disabled, true: colors.primary }}
       />
     </View>
   );

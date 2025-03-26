@@ -30,11 +30,11 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
   active: {
-    color: colors.status.success,
+    color: colors.primary,
     fontWeight: "500",
   },
   inactive: {
-    color: colors.text.secondary,
+    color: colors.status.disabled,
     fontWeight: "500",
   },
   buttonContainer: {
