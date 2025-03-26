@@ -25,7 +25,7 @@ describe("ContactListItem", () => {
     );
 
     expect(getByText("John Doe")).toBeTruthy();
-    expect(getByText("3061234567")).toBeTruthy();
+    expect(getByText("306-123-4567")).toBeTruthy();
     expect(getByText("Active")).toBeTruthy();
   });
 

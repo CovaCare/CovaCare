@@ -59,6 +59,6 @@ describe("DetectionSection", () => {
       />
     );
 
-    expect(getByText("Time of Inactivity Before Alert (minutes)")).toBeTruthy();
+    expect(getByText("Inactivity Duration (minutes)")).toBeTruthy();
   });
 });

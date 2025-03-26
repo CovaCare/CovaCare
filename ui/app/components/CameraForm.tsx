@@ -8,6 +8,7 @@ import { DetectionSection } from "./common/components/DetectionSection";
 import Icon from "react-native-vector-icons/Ionicons";
 import { styles } from "./common/styles/FormField.styles";
 import { ToggleField } from "./common/components/ToggleField";
+import colors from "../../constants/colors";
 
 interface CameraFormProps {
   camera: Camera | null;
@@ -30,13 +31,13 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
   const [inactivity_detection_enabled, setInactivityDetectionEnabled] =
     useState(camera?.inactivity_detection_enabled === 1);
   const [fallDetectionStartTime, setFallDetectionStartTime] = useState(
-    camera?.fall_detection_start_time || "00:00"
+    camera?.fall_detection_start_time || "05:00"
   );
   const [fallDetectionEndTime, setFallDetectionEndTime] = useState(
     camera?.fall_detection_end_time || "00:00"
   );
   const [inactivityDetectionStartTime, setInactivityDetectionStartTime] =
-    useState(camera?.inactivity_detection_start_time || "00:00");
+    useState(camera?.inactivity_detection_start_time || "05:00");
   const [inactivityDetectionEndTime, setInactivityDetectionEndTime] = useState(
     camera?.inactivity_detection_end_time || "00:00"
   );
@@ -45,7 +46,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
     camera?.inactivity_detection_sensitivity ?? 50
   );
   const [inactivityDuration, setInactivityDuration] = useState(
-    camera?.inactivity_detection_duration?.toString() ?? "30"
+    camera?.inactivity_detection_duration?.toString() ?? "5"
   );
   const [send_image_with_alert, setSendImageWithAlert] = useState(
     camera?.send_image_with_alert === 1
@@ -99,12 +100,12 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
         valid = false;
       }
       if (
-        parseInt(inactivityDuration, 10) > 60 ||
-        parseInt(inactivityDuration, 10) < 3
+        parseInt(inactivityDuration, 10) > 30 ||
+        parseInt(inactivityDuration, 10) < 1
       ) {
         Alert.alert(
           "Warning",
-          "Time of inactivity before alert must be between 3 and 60 minutes."
+          "Inactivity duration must be between 1 and 30 minutes."
         );
         valid = false;
       }
@@ -152,10 +153,10 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           value={name}
           onChangeText={setName}
           error={nameError}
-          placeholder="Camera Name"
+          placeholder="Enter a camera name"
           infoButtonTitle={"Camera Name"}
           infoButtonMessage={
-            "Enter a name for your camera. You might want to use the location where it's installed (e.g., Living Room, Front Door, Kitchen) or any other meaningful name."
+            "Enter any meaningful name for your camera (e.g., 'Living Room')"
           }
         />
 
@@ -164,20 +165,20 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           value={username}
           onChangeText={setUsername}
           error={usernameError}
-          placeholder="Camera Username"
+          placeholder="Enter the camera's username"
           infoButtonTitle="Camera Username"
-          infoButtonMessage="This is the login username for accessing the camera stream. It’s usually found in the user manual or on a label on the camera."
+          infoButtonMessage="Enter your camera's streaming username. This can typically be found in the user manual or as a label on the device."
         />
         <View style={{ position: "relative" }}>
           <FormField
             label="Password"
             value={password}
             onChangeText={setPassword}
-            placeholder="Camera password"
+            placeholder="Enter the camera's password"
             error={passwordError}
             secureTextEntry={!showPassword}
             infoButtonTitle="Camera Password"
-            infoButtonMessage="This is the password required to access the camera stream. Check the manual or product sticker if you're unsure."
+            infoButtonMessage="Enter your camera's streaming password. This can typically be found in the user manual or as a label on the device."
           />
           <TouchableOpacity
             style={styles.eyeButton}
@@ -187,7 +188,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
             <Icon
               name={showPassword ? "eye-off" : "eye"}
               size={22}
-              color="gray"
+              color={colors.icon.primary}
             />
           </TouchableOpacity>
         </View>
@@ -195,17 +196,15 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
           label="IP Address"
           value={stream_url}
           onChangeText={setStreamUrl}
-          placeholder="192.168.0.100"
+          placeholder="Enter the camera's IP address"
           error={streamUrlError}
-          infoButtonTitle="Camera Stream URL"
-          infoButtonMessage="Enter the camera’s IP address or streaming URL. You can usually find this in the user manual or on a sticker on the camera."
+          infoButtonTitle="Camera IP Address"
+          infoButtonMessage="Enter your camera's IP address. This can be found in your router’s device list or through camera setup software."
         />
         <ToggleField
           label="Send Image with Alert"
           infoButtonTitle={"Alert Images"}
-          infoButtonMessage={
-            "If this field is active, emergency alerts from this camera will contain an image of the incident."
-          }
+          infoButtonMessage="If this field is active, emergency alerts from this camera will contain an image of the incident."
           spaceBetween={true}
           value={send_image_with_alert}
           onValueChange={setSendImageWithAlert}
@@ -222,7 +221,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
         onStartTimeChange={setFallDetectionStartTime}
         onEndTimeChange={setFallDetectionEndTime}
         infoButtonTitle="Fall Detection"
-        infoButtonMessage="When enabled, the system will monitor for potential falls and send alerts when detected."
+        infoButtonMessage="Activating this feature allows the system to detect falls from this camera feed."
       />
 
       <DetectionSection
@@ -240,7 +239,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
         duration={inactivityDuration}
         onDurationChange={setInactivityDuration}
         infoButtonTitle="Inactivity Detection"
-        infoButtonMessage="When enabled, the system will monitor for periods of inactivity and send alerts if no movement is detected for the specified duration."
+        infoButtonMessage="Activating this feature allows the system to detect inactivity from this camera feed."
       />
     </BaseForm>
   );

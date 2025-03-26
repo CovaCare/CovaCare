@@ -74,7 +74,7 @@ export const ContactForm = ({
           value={name}
           onChangeText={setName}
           error={nameError}
-          placeholder="Contact Name"
+          placeholder="Enter the contact's name"
           maxLength={50}
         />
 
@@ -83,7 +83,7 @@ export const ContactForm = ({
           value={phone}
           onChangeText={setPhone}
           error={phoneError}
-          placeholder="Phone Number"
+          placeholder="Enter the contact's phone number"
           keyboardType="numeric"
         />
 

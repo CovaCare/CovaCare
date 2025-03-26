@@ -1,28 +1,31 @@
 import { Tabs } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Logo } from "../components/common/components/Logo";
+import colors from "../../constants/colors";
 
 export default function TabLayout() {
   return (
     <Tabs
       initialRouteName="emergencyContacts"
       screenOptions={{
-        tabBarActiveTintColor: "#4762e8",
+        tabBarActiveTintColor: colors.primary,
         headerTitleStyle: {
           fontSize: 22,
           fontWeight: "bold",
         },
         headerStyle: {
           height: 115,
-          backgroundColor: "#f8f9fa",
+          backgroundColor: colors.background.primary,
         },
         headerTitleAlign: "left",
         headerTitleContainerStyle: {
           justifyContent: "flex-end",
           paddingBottom: 10,
-          paddingLeft: 16,
+          paddingLeft: 8,
+        },
+        headerRightContainerStyle: {
+          paddingRight: 8,
         },
         headerRight: () => <Logo />,
       }}

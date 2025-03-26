@@ -1,6 +1,7 @@
-import React from 'react';
-import { TouchableOpacity, Alert } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React from "react";
+import { TouchableOpacity, Alert } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import colors from "../../../../constants/colors";
 
 interface InfoButtonProps {
   title: string;
@@ -13,8 +14,12 @@ export const InfoButton = ({ title, message }: InfoButtonProps) => {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} style={{ marginLeft: 8 }}>
-      <Ionicons name="information-circle-outline" size={20} color="#007BFF" />
+    <TouchableOpacity onPress={handlePress} style={{ marginLeft: 4 }}>
+      <Ionicons
+        name="information-circle-outline"
+        size={20}
+        color={colors.secondary}
+      />
     </TouchableOpacity>
   );
-}; 
+};

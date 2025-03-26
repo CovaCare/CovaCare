@@ -85,11 +85,13 @@ export const DetectionSection = ({
           {duration !== undefined && onDurationChange && (
             <View style={styles.durationContainer}>
               <FormField
-                label="Time of Inactivity Before Alert (minutes)"
+                label="Inactivity Duration (minutes)"
                 value={duration}
                 onChangeText={onDurationChange}
                 keyboardType="numeric"
                 placeholder="Enter duration"
+                infoButtonTitle="Inactivity Duration"
+                infoButtonMessage="Set the amount of time (in minutes) that a person must be inactive before an alert is triggered."
               />
             </View>
           )}

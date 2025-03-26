@@ -1,6 +1,15 @@
-import { Text, TextInput, View, TouchableOpacity, Keyboard, InputAccessoryView, Platform } from "react-native";
+import {
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Keyboard,
+  InputAccessoryView,
+  Platform,
+} from "react-native";
 import { styles } from "../styles/FormField.styles";
 import { InfoButton } from "./InfoButton";
+import colors from "../../../../constants/colors";
 
 interface FormFieldProps {
   label: string;
@@ -27,9 +36,9 @@ export const FormField = ({
   keyboardType = "default",
   style,
   infoButtonTitle,
-  infoButtonMessage
+  infoButtonMessage,
 }: FormFieldProps) => {
-  const inputAccessoryViewID = `keyboard-${label.replace(/\s+/g, '')}`;
+  const inputAccessoryViewID = `keyboard-${label.replace(/\s+/g, "")}`;
 
   return (
     <View>
@@ -42,7 +51,7 @@ export const FormField = ({
       <TextInput
         style={[styles.input, error && styles.inputError, style]}
         placeholder={placeholder}
-        placeholderTextColor="#7D7D7D"
+        placeholderTextColor={colors.status.disabled}
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
@@ -50,13 +59,13 @@ export const FormField = ({
         keyboardType={keyboardType}
         inputAccessoryViewID={inputAccessoryViewID}
       />
-      {Platform.OS === 'ios' && (
+      {Platform.OS === "ios" && (
         <InputAccessoryView nativeID={inputAccessoryViewID}>
           <View style={styles.keyboardAccessory}>
-            <TouchableOpacity 
-              style={styles.keyboardButton} 
+            <TouchableOpacity
+              style={styles.keyboardButton}
               onPress={() => {
-                Keyboard.dismiss(); 
+                Keyboard.dismiss();
               }}
             >
               <Text style={styles.saveButtonText}>Done</Text>

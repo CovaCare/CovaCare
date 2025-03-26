@@ -83,7 +83,8 @@ def test_update_camera(client, mock_query_db):
         "inactivity_detection_start_time": "08:00",
         "inactivity_detection_end_time": "20:00",
         "inactivity_detection_sensitivity": 50,
-        "inactivity_detection_duration": 30
+        "inactivity_detection_duration": 30,
+        "send_image_with_alert": 0
     }
     mock_query_db.side_effect = [
         existing_camera,

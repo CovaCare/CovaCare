@@ -19,6 +19,7 @@ describe("CameraListItem", () => {
     inactivity_detection_duration: 30,
     created_at: "2025-03-01",
     updated_at: "2025-03-01",
+    send_image_with_alert: 0,
   };
 
   const mockOnSelect = jest.fn();
@@ -35,8 +36,8 @@ describe("CameraListItem", () => {
 
     expect(getByText("Living Room Camera")).toBeTruthy();
     expect(getByText("198.123.456.12")).toBeTruthy();
-    expect(getByText("Fall Detection: Enabled")).toBeTruthy();
-    expect(getByText("Inactivity Detection: Disabled")).toBeTruthy();
+    expect(getByText("Enabled")).toBeTruthy();
+    expect(getByText("Disabled")).toBeTruthy();
   });
 
   it("calls onSelect when camera is pressed", () => {
