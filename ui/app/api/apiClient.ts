@@ -2,7 +2,7 @@ import axios from "axios";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = "http://172.16.1.63:5001";
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -14,7 +14,11 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (!error.response || error.code === "ECONNABORTED" || error.message.includes("Network Error")) {
+    if (
+      !error.response ||
+      error.code === "ECONNABORTED" ||
+      error.message.includes("Network Error")
+    ) {
       router.replace("/+not-found");
     } else if (error.response?.status === 404) {
       Alert.alert(

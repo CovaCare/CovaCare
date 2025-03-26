@@ -19,7 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.
 from server_config import BASE_URL
 
 frame_queue = queue.Queue()
-stop_event = threading.Event()
+global_stop_event = threading.Event()
 
 def format_alert_message(event_type, camera_name=None, timestamp=None):
     timestamp = timestamp or datetime.now()
@@ -52,8 +52,9 @@ def save_incident_frame(frame, incident_type, camera_name=None):
 
 def manage_camera_threads():
     active_threads = {}
+    stop_events = {}
 
-    while not stop_event.is_set():
+    while not global_stop_event.is_set():
         new_camera_data = get_api_cameras()
         current_cameras = {}
 
@@ -75,30 +76,41 @@ def manage_camera_threads():
                     cam.get("inactivity_detection_sensitivity", DEFAULT_INACTIVITY_SENSITIVITY),
                     cam.get("inactivity_detection_duration", DEFAULT_INACTIVITY_DURATION),
                     cam.get("name", "Unknown Camera"),
-                    cam.get("id", 0)
+                    cam.get("id", 0),
+                    cam.get("send_image_with_alert", False)
                 )
 
                 current_cameras[url] = settings
 
         if INCLUDE_WEBCAM:
             current_cameras[0] = (DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DETECTION_ENABLED,
-                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, "webcam", 0)
+                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, "webcam", 0, True)
 
         # Restart threads if settings change
         for url, settings in current_cameras.items():
             if url not in active_threads or active_threads[url]["settings"] != settings:
                 if url in active_threads:
+                    stop_events[url].set()
                     active_threads[url]["thread"].join()  # Ensure the old thread stops
-                thread = threading.Thread(target=process_camera, args=(url, *settings), daemon=True)
+                    del active_threads[url]
+                    del stop_events[url]
+                stop_event = threading.Event()
+                thread = threading.Thread(target=process_camera, args=(url, *settings, stop_event), daemon=False)
                 thread.start()
                 active_threads[url] = {"thread": thread, "settings": settings}
+                stop_events[url] = stop_event
 
         # Remove threads for removed cameras
         for url in list(active_threads.keys()):
             if url not in current_cameras:
-                active_threads.pop(url)
+                stop_events[url].set()
+                active_threads[url]["thread"].join()  # Ensure the old thread stops
+                del active_threads[url]
+                del stop_events[url]
 
-        stop_event.wait(CAMERA_STREAM_REFRESH_PERIOD)
+        global_stop_event.wait(CAMERA_STREAM_REFRESH_PERIOD)
+    
+
 
 
 def format_stream_url(camera):
@@ -131,17 +143,18 @@ def is_within_time_range(start_time, end_time, now):
     return start_dt <= now_dt <= end_dt
 
 
-def process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration, camera_name, camera_id):
+def process_camera(stream_url, fall_detection_active, inactivity_detection_active, inactivity_sensitivity, inactivity_duration, camera_name, camera_id, send_image_with_alert, local_stop_event):
     cap = cv2.VideoCapture(stream_url)
+
     if not cap.isOpened():
         print(f"Failed to connect to {stream_url}. Waiting for health check requests.")
-        while not stop_event.is_set():
+        while not local_stop_event.is_set():
             if camera_id in health_checks and health_checks[camera_id] is True:
                 with lock:
                     health_checks[camera_id] = False
                 alert_active_contacts(f"Health check for camera: {camera_name}:\n\n"
                                        "Camera stream failed to connect. Make sure username, password, and IP address are configured correctly.")
-            stop_event.wait(5)
+            local_stop_event.wait(5)
         return
 
     fall_detector = FallDetector()
@@ -150,7 +163,7 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
     last_fall_alert_time = datetime.now() - timedelta(seconds=FALL_ALERT_TIMEOUT_PER_CAMERA + 1)
     last_inactivity_alert_time = datetime.now() - timedelta(seconds=INACTIVITY_ALERT_TIMEOUT_PER_CAMERA + 1)
 
-    while not stop_event.is_set():
+    while not local_stop_event.is_set():
         if ENFORCE_REALTIME and CAP_GRAB_COUNT > 0:
             for _ in range(CAP_GRAB_COUNT):
                 cap.grab()
@@ -192,21 +205,21 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                 cv2.FONT_HERSHEY_SIMPLEX, 1,
                 (0, 255, 0), 2, cv2.LINE_AA
             )
-            # cv2.putText(
-            #     frame, f"Inactivity Active: {inactivity_detection_active}", (0, 200),
-            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
-            #     (0, 255, 0), 2, cv2.LINE_AA
-            # )
-            # cv2.putText(
-            #     frame, f"Fall Active: {fall_detection_active}", (0, 250),
-            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
-            #     (0, 255, 0), 2, cv2.LINE_AA
-            # )
-            # cv2.putText(
-            #     frame, f"Duration: {inactivity_duration}", (0, 300),
-            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
-            #     (0, 255, 0), 2, cv2.LINE_AA
-            # )
+            cv2.putText(
+                frame, f"Inactivity Active: {inactivity_detection_active}", (0, 200),
+                cv2.FONT_HERSHEY_SIMPLEX, 1,
+                (0, 255, 0), 2, cv2.LINE_AA
+            )
+            cv2.putText(
+                frame, f"Fall Active: {fall_detection_active}", (0, 250),
+                cv2.FONT_HERSHEY_SIMPLEX, 1,
+                (0, 255, 0), 2, cv2.LINE_AA
+            )
+            cv2.putText(
+                frame, f"Duration: {inactivity_duration}", (0, 300),
+                cv2.FONT_HERSHEY_SIMPLEX, 1,
+                (0, 255, 0), 2, cv2.LINE_AA
+            )
             
             if SEND_ALERTS:
                 current_time = datetime.now()
@@ -214,18 +227,24 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                 if fall_detected:
                     time_since_last_fall_alert = (current_time - last_fall_alert_time).total_seconds()
                     if time_since_last_fall_alert > FALL_ALERT_TIMEOUT_PER_CAMERA:
-                        media_url = save_incident_frame(frame, "fall", camera_name)
                         message = format_alert_message("fall", camera_name, current_time)
-                        success = alert_active_contacts(message, media_url)
+                        if send_image_with_alert:
+                            media_url = save_incident_frame(frame, "fall", camera_name)
+                            success = alert_active_contacts(message, media_url)
+                        else:
+                            success = alert_active_contacts(message)
                         if success:
                             last_fall_alert_time = current_time
                             
                 if inactive:
                     time_since_last_inactivity_alert = (current_time - last_inactivity_alert_time).total_seconds()
                     if time_since_last_inactivity_alert > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
-                        media_url = save_incident_frame(frame, "inactivity", camera_name)
                         message = format_alert_message("inactivity", camera_name, current_time)
-                        success = alert_active_contacts(message, media_url)
+                        if send_image_with_alert:
+                            media_url = save_incident_frame(frame, "inactivity", camera_name)
+                            success = alert_active_contacts(message, media_url)
+                        else:
+                            success = alert_active_contacts(message)
                         if success:
                             last_inactivity_alert_time = current_time
 
@@ -244,7 +263,7 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
 def display_frames():
     windows = {}
 
-    while not stop_event.is_set():
+    while not global_stop_event.is_set():
         while not frame_queue.empty():
             stream_url, frame = frame_queue.get()
             if stream_url not in windows:
@@ -258,4 +277,4 @@ def display_frames():
     cv2.destroyAllWindows()
 
 def stop_processing():
-    stop_event.set()
+    global_stop_event.set()
