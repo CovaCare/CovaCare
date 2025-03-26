@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobileApp",
-    "slug": "mobileApp",
+    "name": "CovaCare",
+    "slug": "CovaCare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
