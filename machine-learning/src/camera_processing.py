@@ -73,7 +73,8 @@ def manage_camera_threads():
                 settings = (
                     fall_active,
                     inactivity_active,
-                    cam.get("inactivity_detection_sensitivity", DEFAULT_INACTIVITY_SENSITIVITY),
+                    #cam.get("inactivity_detection_sensitivity", DEFAULT_INACTIVITY_SENSITIVITY),
+                    DEFAULT_INACTIVITY_SENSITIVITY,
                     cam.get("inactivity_detection_duration", DEFAULT_INACTIVITY_DURATION),
                     cam.get("name", "Unknown Camera"),
                     cam.get("id", 0),
