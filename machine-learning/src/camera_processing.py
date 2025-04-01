@@ -25,12 +25,12 @@ def format_alert_message(event_type, camera_name=None, timestamp=None):
     timestamp = timestamp or datetime.now()
     time_str = timestamp.strftime('%I:%M %p')
     date_str = timestamp.strftime('%B %d, %Y')
-    location = f"Camera: {camera_name}" if camera_name else "Unknown Camera"
+    camera = camera_name if camera_name else "Unknown"
     
     if event_type == "fall":
-        return f"FALL DETECTED \n\nTime: {time_str}\nDate: {date_str}\nLocation: {location}\n\nImmediate assistance may be required. Please check on the person as soon as possible."
+        return f"FALL DETECTED \n\nTime: {time_str}\nDate: {date_str}\Camera: {camera}\n\nImmediate assistance may be required."
     elif event_type == "inactivity":
-        return f"INACTIVITY ALERT \n\nTime: {time_str}\nDate: {date_str}\nLocation: {location}\n\nNo movement has been detected for an extended period. Please check on the person."
+        return f"PROLONGED INACTIVITY DETECTED \n\nTime: {time_str}\nDate: {date_str}\Camera: {camera}\n\nImmediate assistance may be required."
     return ""
 
 def save_incident_frame(frame, incident_type, camera_name=None):
