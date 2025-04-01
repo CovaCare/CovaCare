@@ -239,7 +239,7 @@ export const CameraForm = ({ camera, onSave, onCancel }: CameraFormProps) => {
         duration={inactivityDuration}
         onDurationChange={setInactivityDuration}
         infoButtonTitle="Inactivity Detection"
-        infoButtonMessage="Activating this feature allows the system to detect inactivity from this camera feed."
+        infoButtonMessage="Activating this feature allows the system to detect prolonged periods of inactivity from this camera feed."
       />
     </BaseForm>
   );
