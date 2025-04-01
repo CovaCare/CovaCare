@@ -59,7 +59,6 @@ health_checks = {}
 
 def poll_health_checks():
     while not stop_event.is_set():
-        print(health_checks)
         try:
             response = requests.get(API_BASE_URL + '/health_checks', timeout=API_TIMEOUT)
             if response.status_code == 200:

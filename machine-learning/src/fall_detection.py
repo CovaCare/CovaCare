@@ -5,7 +5,7 @@ import os
 import time
 from config import ( MODEL_HIDDEN_SIZE, MODEL_OUTPUT_SIZE, MODEL_L2_REGULARIZATION, MODEL_RECURRENT_DROPOUT, 
                      MODEL_DROPOUT, FALL_INPUT_SIZE, FALL_WINDOW_SIZE, FALL_PREDICTION_HISTORY_SIZE, 
-                     FALL_1_AND_3_THRESHOLD, FALL_2_THRESHOLD, FALL_EXPECTED_FRAME_RATE, ENFORCE_REALTIME )
+                     FALL_EXPECTED_FRAME_RATE, ENFORCE_REALTIME, BIAS_FALSE_POSITIVES )
 
 @tf.keras.utils.register_keras_serializable()
 class FallDetectionLSTM(tf.keras.Model):
@@ -98,13 +98,20 @@ class FallDetector:
         class_mean_index = {i: np.mean(all_class_indices[i]) if len(all_class_indices[i]) > 0 else None for i in range(4)}
         class_count = {i: len(all_class_indices[i]) for i in range(4)}
 
-        # If there are a lot of 2s, return true
-        if class_count[2] > FALL_2_THRESHOLD:
-            return True
+        if BIAS_FALSE_POSITIVES:
+            # If there are a lot of 2s, return true
+            if class_count[2] > 12:
+                return True
+            
+            # If there are many 1s followed by many 3s, return true
+            if class_count[1] > 5 and class_count[3] > 5 and class_mean_index[1] < class_mean_index[3]:
+                return True
         
-        # If there are many 1s followed by many 3s, return true
-        if class_count[1] > FALL_1_AND_3_THRESHOLD and class_count[3] > FALL_1_AND_3_THRESHOLD and class_mean_index[1] < class_mean_index[3]:
-            return True
+        else:
+            if class_count[1] > 4 and class_count[2] > 4 and class_count[3] > 4:
+                if class_mean_index[1] < class_mean_index[2] < class_mean_index[3]:
+                    return True
+
         
         return False
     
