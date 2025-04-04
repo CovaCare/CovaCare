@@ -17,6 +17,10 @@ Designed for the elderly and disabled, CovaCare enhances safety while preserving
 - [Application](./ui/) – Mobile or web application interface.
 
 
-## CovaCare Development Vlog
+## Links
 
-- [First semester development vlog](https://www.youtube.com/watch?v=Jqfks_QOpdg)
+- [Vlog #1](https://www.youtube.com/watch?v=Jqfks_QOpdg)
+- [Vlog #2](https://www.youtube.com/watch?v=yxYzgEaJ7-U)
+- [Vlog #3](https://www.youtube.com/watch?v=5KMLHc7qN2A)
+- [Project Demo](https://www.youtube.com/watch?v=p2NPLZHHx8I)
+- [Project Commercial](https://www.youtube.com/watch?v=WYadmJDffXE)
