@@ -30,7 +30,7 @@ def format_alert_message(event_type, camera_name=None, timestamp=None):
     if event_type == "fall":
         return f"FALL DETECTED \n\nTime: {time_str}\nDate: {date_str}\nCamera: {camera}\n\nImmediate assistance may be required."
     elif event_type == "inactivity":
-        return f"PROLONGED INACTIVITY DETECTED \n\nTime: {time_str}\nDate: {date_str}\Camera: {camera}\n\nImmediate assistance may be required."
+        return f"PROLONGED INACTIVITY DETECTED \n\nTime: {time_str}\nDate: {date_str}\nCamera: {camera}\n\nImmediate assistance may be required."
     return ""
 
 def save_incident_frame(frame, incident_type, camera_name=None):
@@ -85,7 +85,7 @@ def manage_camera_threads():
 
         if INCLUDE_WEBCAM:
             current_cameras[0] = (DEFAULT_FALL_DETECTION_ENABLED, DEFAULT_INACTIVITY_DETECTION_ENABLED,
-                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, "webcam", 0, True)
+                                  DEFAULT_INACTIVITY_SENSITIVITY, DEFAULT_INACTIVITY_DURATION, "Webcam", 0, True)
 
         # Restart threads if settings change
         for url, settings in current_cameras.items():
@@ -177,7 +177,8 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                 continue
             else:
                 break
-
+        
+        original_frame = frame.copy()
         fall_keypoints, inactivity_keypoints, frame = process_pose(frame, DRAW_LANDMARKS)
 
         current_window_class = 0
@@ -188,39 +189,39 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
 
         inactive = False
         if inactivity_detection_active:
-            inactive = inactivity_monitor.check_inactivity(inactivity_keypoints)
+            inactive, inactive_time = inactivity_monitor.check_inactivity(inactivity_keypoints)
 
         if DISPLAY_RESULTS_ON_FRAME:
-            cv2.putText(
-                frame, f"Current Window Class: {current_window_class}", (0, 50),
-                cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 255, 0), 2, cv2.LINE_AA 
-            )
-            cv2.putText(
-                frame, f"Fall Detected: {fall_detected}", (0, 100),
-                cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 255, 0), 2, cv2.LINE_AA 
-            )
-            cv2.putText(
-                frame, f"Inactivity Detected: {inactive}", (0, 150),
-                cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 255, 0), 2, cv2.LINE_AA
-            )
-            cv2.putText(
-                frame, f"Inactivity Active: {inactivity_detection_active}", (0, 200),
-                cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 255, 0), 2, cv2.LINE_AA
-            )
-            cv2.putText(
-                frame, f"Fall Active: {fall_detection_active}", (0, 250),
-                cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 255, 0), 2, cv2.LINE_AA
-            )
-            cv2.putText(
-                frame, f"Duration: {inactivity_duration}", (0, 300),
-                cv2.FONT_HERSHEY_SIMPLEX, 1,
-                (0, 255, 0), 2, cv2.LINE_AA
-            )
+            # cv2.putText(
+            #     frame, f"Inactive Time: {inactive_time:.2f} seconds", (90, 50),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA 
+            # )
+            # cv2.putText(
+            #     frame, f"Fall Detected: {fall_detected}", (90, 100),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA 
+            # )
+            # cv2.putText(
+            #     frame, f"Inactivity Detected: {inactive}", (0, 150),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA
+            # )
+            # cv2.putText(
+            #     frame, f"Inactivity Active: {inactivity_detection_active}", (0, 200),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA
+            # )
+            # cv2.putText(
+            #     frame, f"Fall Active: {fall_detection_active}", (0, 250),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA
+            # )
+            # cv2.putText(
+            #     frame, f"Duration: {inactivity_duration}", (0, 300),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1,
+            #     (0, 255, 0), 2, cv2.LINE_AA
+            # )
             
             if SEND_ALERTS:
                 current_time = datetime.now()
@@ -230,7 +231,7 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                     if time_since_last_fall_alert > FALL_ALERT_TIMEOUT_PER_CAMERA:
                         message = format_alert_message("fall", camera_name, current_time)
                         if send_image_with_alert:
-                            media_url = save_incident_frame(frame, "fall", camera_name)
+                            media_url = save_incident_frame(original_frame, "fall", camera_name)
                             success = alert_active_contacts(message, media_url)
                         else:
                             success = alert_active_contacts(message)
@@ -242,7 +243,7 @@ def process_camera(stream_url, fall_detection_active, inactivity_detection_activ
                     if time_since_last_inactivity_alert > INACTIVITY_ALERT_TIMEOUT_PER_CAMERA:
                         message = format_alert_message("inactivity", camera_name, current_time)
                         if send_image_with_alert:
-                            media_url = save_incident_frame(frame, "inactivity", camera_name)
+                            media_url = save_incident_frame(original_frame, "inactivity", camera_name)
                             success = alert_active_contacts(message, media_url)
                         else:
                             success = alert_active_contacts(message)
