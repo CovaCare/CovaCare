@@ -28,7 +28,7 @@ def format_alert_message(event_type, camera_name=None, timestamp=None):
     camera = camera_name if camera_name else "Unknown"
     
     if event_type == "fall":
-        return f"FALL DETECTED \n\nTime: {time_str}\nDate: {date_str}\Camera: {camera}\n\nImmediate assistance may be required."
+        return f"FALL DETECTED \n\nTime: {time_str}\nDate: {date_str}\nCamera: {camera}\n\nImmediate assistance may be required."
     elif event_type == "inactivity":
         return f"PROLONGED INACTIVITY DETECTED \n\nTime: {time_str}\nDate: {date_str}\Camera: {camera}\n\nImmediate assistance may be required."
     return ""
