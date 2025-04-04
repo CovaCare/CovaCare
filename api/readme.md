@@ -8,5 +8,5 @@ To run this API, execute the `flaskapi.py` script.
 
 # Database
 
-We utilize SQLite to host the database that stores emergency contacts, camera settings, and machine learning detection settings.
+We utilize SQLite for the database that stores emergency contacts and camera settings
 - [DB Tables Structure](./db/sql.sql)
