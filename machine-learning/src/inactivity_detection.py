@@ -23,4 +23,4 @@ class InactivityMonitor:
         self.previous_keypoints = current_keypoints
         self.last_frame_time = time.time()
 
-        return self.inactive_time >= self.duration
+        return self.inactive_time >= self.duration, self.inactive_time
