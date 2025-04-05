@@ -22,8 +22,8 @@ The CovaCare mobile application serves as the primary interface for users and ca
 - **Health Check System**  
   Perform a camera health check and notify contacts with camera status and a live snapshot.
 
-- **Local Video Processing**  
-  All video is processed on-device to protect user data—no cloud storage or third-party access.
+- **Local Storage**  
+  All data is stored on-device. There is no cloud storage or third-party access.
 
 ## Getting Started
 
