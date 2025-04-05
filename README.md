@@ -1,5 +1,7 @@
 # CovaCare
 
+![CovaCare Poster](https://github.com/user-attachments/assets/01604daf-9009-421f-9c2d-34cc3be7274c)
+
 CovaCare (Computer Vision Accident Care) is an intelligent safety system that uses in-home cameras to detect slips, falls, and prolonged inactivity. When an incident occurs, the system instantly identifies it and alerts emergency contacts, ensuring a fast response and reducing the risk of serious injury.
 
 In Canada, falls are the leading cause of injury-related hospitalizations and deaths among individuals aged 65 and older, yet many go unnoticed for hours. While traditional alerting systems help, they rely on users pressing a button or wearing a device, which can be impractical or easily forgotten.

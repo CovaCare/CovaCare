@@ -33,13 +33,13 @@ CREATE TABLE cameras (
 );
 
 
--- CREATE TABLE global_settings (
---     id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique identifier for global settings
---     fall_detection_enabled INTEGER NOT NULL CHECK (fall_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
---     fall_detection_start_time TIME DEFAULT NULL, -- Start time for Fall Detection
---     fall_detection_end_time TIME DEFAULT NULL, -- End time for Fall Detection
---     inactivity_detection_enabled INTEGER NOT NULL CHECK (inactivity_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
---     inactivity_detection_start_time TIME DEFAULT NULL, -- Start time for Inactivity Detection
---     inactivity_detection_end_time TIME DEFAULT NULL, -- End time for Inactivity Detection
---     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP -- Timestamp for the last update
--- );
+CREATE TABLE global_settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique identifier for global settings
+    fall_detection_enabled INTEGER NOT NULL CHECK (fall_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
+    fall_detection_start_time TIME DEFAULT NULL, -- Start time for Fall Detection
+    fall_detection_end_time TIME DEFAULT NULL, -- End time for Fall Detection
+    inactivity_detection_enabled INTEGER NOT NULL CHECK (inactivity_detection_enabled IN (0, 1)) DEFAULT 0, -- 0 = Disabled, 1 = Enabled
+    inactivity_detection_start_time TIME DEFAULT NULL, -- Start time for Inactivity Detection
+    inactivity_detection_end_time TIME DEFAULT NULL, -- End time for Inactivity Detection
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP -- Timestamp for the last update
+);
