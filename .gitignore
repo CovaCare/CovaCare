@@ -1,6 +1,0 @@
-*.DS_Store
-*.docx
-__pycache__
-.env
-cert.pem
-key.pem
